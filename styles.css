@@ -1,0 +1,428 @@
+/* =========================
+   RESET
+========================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f5f7fb;
+  color: #1f2937;
+  line-height: 1.6;
+}
+
+/* =========================
+   APP
+========================= */
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header {
+  width: 100%;
+  padding: 25px 8%;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+}
+
+.logo h1 {
+  font-size: 28px;
+  color: #111827;
+}
+
+.logo p {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.search-container {
+  width: 350px;
+}
+
+#search-input {
+  width: 100%;
+  padding: 12px 16px;
+
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+
+  font-size: 15px;
+  outline: none;
+
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#search-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* =========================
+   MAIN CONTENT
+========================= */
+
+.main-content {
+  width: min(900px, 90%);
+  margin: 40px auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+
+  flex: 1;
+}
+
+/* =========================
+   NOTE EDITOR
+========================= */
+
+.note-editor {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+
+  border: 1px solid #e5e7eb;
+
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+}
+
+.note-editor h2 {
+  margin-bottom: 15px;
+  font-size: 20px;
+}
+
+#note-input {
+  width: 100%;
+  min-height: 180px;
+
+  padding: 15px;
+
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+
+  resize: vertical;
+
+  font-family: inherit;
+  font-size: 15px;
+
+  outline: none;
+
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#note-input:focus {
+  border-color: #6366f1;
+
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.editor-footer {
+  margin-top: 15px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#character-count {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+#save-note-btn {
+  border: none;
+  border-radius: 8px;
+
+  padding: 11px 20px;
+
+  background: #4f46e5;
+  color: white;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: background 0.2s, transform 0.1s;
+}
+
+#save-note-btn:hover {
+  background: #4338ca;
+}
+
+#save-note-btn:active {
+  transform: scale(0.97);
+}
+
+/* =========================
+   NOTES CONTROLS
+========================= */
+
+.notes-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.notes-controls h2 {
+  font-size: 22px;
+}
+
+#notes-count {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.sort-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sort-container label {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+#sort-select {
+  padding: 9px 12px;
+
+  border: 1px solid #d1d5db;
+  border-radius: 7px;
+
+  background: white;
+
+  font-size: 14px;
+
+  outline: none;
+
+  cursor: pointer;
+}
+
+/* =========================
+   NOTES LIST
+========================= */
+
+.notes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* =========================
+   NOTE CARD
+========================= */
+
+.note-card {
+  background: white;
+
+  padding: 20px;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03);
+
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.note-card:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+  transform: translateY(-1px);
+}
+
+.note-content {
+  margin-bottom: 15px;
+}
+
+.note-content p {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* =========================
+   NOTE META
+========================= */
+
+.note-meta {
+  display: flex;
+  gap: 15px;
+
+  padding-top: 12px;
+
+  border-top: 1px solid #f0f0f0;
+
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* =========================
+   NOTE ACTIONS
+========================= */
+
+.note-actions {
+  margin-top: 15px;
+
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.note-actions button {
+  padding: 7px 12px;
+
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+
+  background: white;
+
+  font-size: 13px;
+
+  cursor: pointer;
+
+  transition: background 0.2s;
+}
+
+.note-actions button:hover {
+  background: #f3f4f6;
+}
+
+.note-actions .delete-btn {
+  color: #dc2626;
+}
+
+.note-actions .delete-btn:hover {
+  background: #fef2f2;
+}
+
+/* =========================
+   EMPTY STATE
+========================= */
+
+.empty-state {
+  text-align: center;
+
+  padding: 50px 20px;
+
+  background: white;
+
+  border: 1px dashed #d1d5db;
+  border-radius: 10px;
+
+  color: #6b7280;
+}
+
+.empty-state h3 {
+  margin-bottom: 5px;
+
+  color: #374151;
+}
+
+/* =========================
+   DAILY QUOTE
+========================= */
+
+.daily-quote {
+  padding: 30px;
+
+  background: #111827;
+  color: white;
+
+  border-radius: 12px;
+
+  text-align: center;
+}
+
+.quote-header {
+  margin-bottom: 15px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  text-transform: uppercase;
+  letter-spacing: 1px;
+
+  color: #9ca3af;
+}
+
+#quote-text {
+  max-width: 700px;
+
+  margin: 0 auto 15px;
+
+  font-size: 20px;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+#quote-author {
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer {
+  padding: 20px;
+
+  text-align: center;
+
+  border-top: 1px solid #e5e7eb;
+
+  background: white;
+
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 700px) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-container {
+    width: 100%;
+  }
+
+  .notes-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sort-container {
+    justify-content: space-between;
+  }
+
+  #sort-select {
+    flex: 1;
+  }
+
+  .note-meta {
+    flex-direction: column;
+    gap: 3px;
+  }
+}
