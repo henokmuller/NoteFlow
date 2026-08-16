@@ -18,13 +18,25 @@
           <p>Your thoughts, organized.</p>
         </div>
 
-        <div class="search-container">
-          <input
-            type="search"
-            id="search-input"
-            placeholder="Search your notes..."
-            autocomplete="off"
-          />
+        <div class="header-actions">
+          <div class="search-container">
+            <input
+              type="search"
+              id="search-input"
+              placeholder="Search your notes..."
+              autocomplete="off"
+            />
+          </div>
+
+          <!-- Theme toggle button -->
+          <button
+            id="theme-toggle"
+            class="theme-toggle"
+            type="button"
+            aria-label="Toggle theme"
+          >
+            🌙
+          </button>
         </div>
       </header>
 
@@ -40,13 +52,13 @@
           ></textarea>
 
           <div class="editor-footer">
-            <span id="character-count">0 characters</span>
+            <span id="character-count"> 0 characters </span>
 
             <button id="save-note-btn" type="button">Save Note</button>
           </div>
         </section>
 
-        <!-- ================= CONTROLS ================= -->
+        <!-- ================= NOTES CONTROLS ================= -->
         <section class="notes-controls">
           <div>
             <h2>Your Notes</h2>
@@ -54,7 +66,7 @@
           </div>
 
           <div class="sort-container">
-            <label for="sort-select">Sort by:</label>
+            <label for="sort-select"> Sort by: </label>
 
             <select id="sort-select">
               <option value="created-newest">Created: Newest</option>
@@ -76,6 +88,7 @@
             Example structure that JS could eventually generate:
 
             <article class="note-card">
+
               <div class="note-content">
                 <p>My note...</p>
               </div>
@@ -86,9 +99,10 @@
               </div>
 
               <div class="note-actions">
-                <button>Edit</button>
-                <button>Delete</button>
+                <button class="edit-btn">Edit</button>
+                <button class="delete-btn">Delete</button>
               </div>
+
             </article>
           -->
 

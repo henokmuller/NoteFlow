@@ -8,11 +8,69 @@
   box-sizing: border-box;
 }
 
+/* =========================
+   THEME VARIABLES
+========================= */
+
+:root {
+  --background: #f5f7fb;
+  --surface: #ffffff;
+  --surface-secondary: #f9fafb;
+
+  --text: #1f2937;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+
+  --border: #e5e7eb;
+  --border-input: #d1d5db;
+
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+
+  --danger: #dc2626;
+
+  --quote-background: #111827;
+  --quote-text: #ffffff;
+}
+
+/* =========================
+   DARK THEME
+========================= */
+
+body.dark-theme {
+  --background: #111827;
+  --surface: #1f2937;
+  --surface-secondary: #374151;
+
+  --text: #f9fafb;
+  --text-secondary: #d1d5db;
+  --text-muted: #9ca3af;
+
+  --border: #374151;
+  --border-input: #4b5563;
+
+  --primary: #6366f1;
+  --primary-hover: #818cf8;
+
+  --danger: #f87171;
+
+  --quote-background: #030712;
+  --quote-text: #ffffff;
+}
+
+/* =========================
+   BODY
+========================= */
+
 body {
   font-family: Arial, Helvetica, sans-serif;
-  background: #f5f7fb;
-  color: #1f2937;
+
+  background: var(--background);
+  color: var(--text);
+
   line-height: 1.6;
+
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* =========================
@@ -21,6 +79,7 @@ body {
 
 .app {
   min-height: 100vh;
+
   display: flex;
   flex-direction: column;
 }
@@ -31,25 +90,45 @@ body {
 
 .header {
   width: 100%;
+
   padding: 25px 8%;
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
+
+  background: var(--surface);
+
+  border-bottom: 1px solid var(--border);
 
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   gap: 30px;
+
+  transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 .logo h1 {
   font-size: 28px;
-  color: #111827;
+  color: var(--text);
 }
 
 .logo p {
   font-size: 14px;
-  color: #6b7280;
+  color: var(--text-secondary);
 }
+
+/* =========================
+   HEADER ACTIONS
+========================= */
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* =========================
+   SEARCH
+========================= */
 
 .search-container {
   width: 350px;
@@ -57,20 +136,64 @@ body {
 
 #search-input {
   width: 100%;
+
   padding: 12px 16px;
 
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-input);
   border-radius: 8px;
 
+  background: var(--surface);
+  color: var(--text);
+
   font-size: 15px;
+
   outline: none;
 
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+#search-input::placeholder {
+  color: var(--text-muted);
 }
 
 #search-input:focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  border-color: var(--primary);
+
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+/* =========================
+   THEME BUTTON
+========================= */
+
+.theme-toggle {
+  width: 44px;
+  height: 44px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid var(--border-input);
+  border-radius: 8px;
+
+  background: var(--surface);
+  color: var(--text);
+
+  font-size: 19px;
+
+  cursor: pointer;
+
+  transition: background-color 0.2s, border-color 0.2s, transform 0.15s;
+}
+
+.theme-toggle:hover {
+  background: var(--surface-secondary);
+}
+
+.theme-toggle:active {
+  transform: scale(0.94);
 }
 
 /* =========================
@@ -79,10 +202,12 @@ body {
 
 .main-content {
   width: min(900px, 90%);
+
   margin: 40px auto;
 
   display: flex;
   flex-direction: column;
+
   gap: 30px;
 
   flex: 1;
@@ -93,44 +218,62 @@ body {
 ========================= */
 
 .note-editor {
-  background: white;
+  background: var(--surface);
+
   padding: 25px;
+
   border-radius: 12px;
 
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border);
 
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+
+  transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 .note-editor h2 {
   margin-bottom: 15px;
+
   font-size: 20px;
 }
 
 #note-input {
   width: 100%;
+
   min-height: 180px;
 
   padding: 15px;
 
-  border: 1px solid #d1d5db;
+  resize: vertical;
+
+  border: 1px solid var(--border-input);
   border-radius: 8px;
 
-  resize: vertical;
+  background: var(--surface);
+  color: var(--text);
 
   font-family: inherit;
   font-size: 15px;
 
   outline: none;
 
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+#note-input::placeholder {
+  color: var(--text-muted);
 }
 
 #note-input:focus {
-  border-color: #6366f1;
+  border-color: var(--primary);
 
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
 }
+
+/* =========================
+   EDITOR FOOTER
+========================= */
 
 .editor-footer {
   margin-top: 15px;
@@ -142,8 +285,13 @@ body {
 
 #character-count {
   font-size: 13px;
-  color: #6b7280;
+
+  color: var(--text-secondary);
 }
+
+/* =========================
+   SAVE BUTTON
+========================= */
 
 #save-note-btn {
   border: none;
@@ -151,7 +299,7 @@ body {
 
   padding: 11px 20px;
 
-  background: #4f46e5;
+  background: var(--primary);
   color: white;
 
   font-size: 14px;
@@ -159,11 +307,11 @@ body {
 
   cursor: pointer;
 
-  transition: background 0.2s, transform 0.1s;
+  transition: background-color 0.2s, transform 0.1s;
 }
 
 #save-note-btn:hover {
-  background: #4338ca;
+  background: var(--primary-hover);
 }
 
 #save-note-btn:active {
@@ -176,8 +324,10 @@ body {
 
 .notes-controls {
   display: flex;
+
   justify-content: space-between;
   align-items: center;
+
   gap: 20px;
 }
 
@@ -187,33 +337,45 @@ body {
 
 #notes-count {
   font-size: 14px;
-  color: #6b7280;
+
+  color: var(--text-secondary);
 }
+
+/* =========================
+   SORT
+========================= */
 
 .sort-container {
   display: flex;
+
   align-items: center;
+
   gap: 10px;
 }
 
 .sort-container label {
   font-size: 14px;
-  color: #6b7280;
+
+  color: var(--text-secondary);
 }
 
 #sort-select {
   padding: 9px 12px;
 
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-input);
   border-radius: 7px;
 
-  background: white;
+  background: var(--surface);
+  color: var(--text);
 
   font-size: 14px;
 
   outline: none;
 
   cursor: pointer;
+
+  transition: background-color 0.25s ease, color 0.25s ease,
+    border-color 0.25s ease;
 }
 
 /* =========================
@@ -222,7 +384,9 @@ body {
 
 .notes-list {
   display: flex;
+
   flex-direction: column;
+
   gap: 15px;
 }
 
@@ -231,22 +395,28 @@ body {
 ========================= */
 
 .note-card {
-  background: white;
+  background: var(--surface);
 
   padding: 20px;
 
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border);
   border-radius: 10px;
 
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03);
 
-  transition: box-shadow 0.2s, transform 0.2s;
+  transition: background-color 0.25s ease, border-color 0.25s ease,
+    box-shadow 0.2s, transform 0.2s;
 }
 
 .note-card:hover {
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+
   transform: translateY(-1px);
 }
+
+/* =========================
+   NOTE CONTENT
+========================= */
 
 .note-content {
   margin-bottom: 15px;
@@ -254,6 +424,7 @@ body {
 
 .note-content p {
   white-space: pre-wrap;
+
   word-break: break-word;
 }
 
@@ -263,14 +434,16 @@ body {
 
 .note-meta {
   display: flex;
+
   gap: 15px;
 
   padding-top: 12px;
 
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--border);
 
   font-size: 12px;
-  color: #9ca3af;
+
+  color: var(--text-muted);
 }
 
 /* =========================
@@ -281,7 +454,9 @@ body {
   margin-top: 15px;
 
   display: flex;
+
   justify-content: flex-end;
+
   gap: 8px;
 }
 
@@ -289,27 +464,25 @@ body {
   padding: 7px 12px;
 
   border-radius: 6px;
-  border: 1px solid #d1d5db;
 
-  background: white;
+  border: 1px solid var(--border-input);
+
+  background: var(--surface);
+  color: var(--text);
 
   font-size: 13px;
 
   cursor: pointer;
 
-  transition: background 0.2s;
+  transition: background-color 0.2s;
 }
 
 .note-actions button:hover {
-  background: #f3f4f6;
+  background: var(--surface-secondary);
 }
 
 .note-actions .delete-btn {
-  color: #dc2626;
-}
-
-.note-actions .delete-btn:hover {
-  background: #fef2f2;
+  color: var(--danger);
 }
 
 /* =========================
@@ -321,18 +494,19 @@ body {
 
   padding: 50px 20px;
 
-  background: white;
+  background: var(--surface);
 
-  border: 1px dashed #d1d5db;
+  border: 1px dashed var(--border-input);
+
   border-radius: 10px;
 
-  color: #6b7280;
+  color: var(--text-secondary);
 }
 
 .empty-state h3 {
   margin-bottom: 5px;
 
-  color: #374151;
+  color: var(--text);
 }
 
 /* =========================
@@ -342,12 +516,14 @@ body {
 .daily-quote {
   padding: 30px;
 
-  background: #111827;
-  color: white;
+  background: var(--quote-background);
+  color: var(--quote-text);
 
   border-radius: 12px;
 
   text-align: center;
+
+  transition: background-color 0.25s ease;
 }
 
 .quote-header {
@@ -357,6 +533,7 @@ body {
   font-weight: 600;
 
   text-transform: uppercase;
+
   letter-spacing: 1px;
 
   color: #9ca3af;
@@ -368,12 +545,15 @@ body {
   margin: 0 auto 15px;
 
   font-size: 20px;
+
   font-style: italic;
+
   line-height: 1.6;
 }
 
 #quote-author {
   font-size: 14px;
+
   color: #9ca3af;
 }
 
@@ -386,12 +566,15 @@ body {
 
   text-align: center;
 
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--border);
 
-  background: white;
+  background: var(--surface);
 
   font-size: 13px;
-  color: #9ca3af;
+
+  color: var(--text-muted);
+
+  transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 /* =========================
@@ -401,15 +584,25 @@ body {
 @media (max-width: 700px) {
   .header {
     flex-direction: column;
+
     align-items: stretch;
+  }
+
+  .header-actions {
+    width: 100%;
   }
 
   .search-container {
     width: 100%;
   }
 
+  .theme-toggle {
+    flex-shrink: 0;
+  }
+
   .notes-controls {
     flex-direction: column;
+
     align-items: stretch;
   }
 
@@ -423,6 +616,7 @@ body {
 
   .note-meta {
     flex-direction: column;
+
     gap: 3px;
   }
 }
