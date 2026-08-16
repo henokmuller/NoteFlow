@@ -7,8 +7,6 @@ class NOTE_FACTORY {
   }
 }
 
-const NoteStorage = [];
-
 function store() {
   const user = new NOTE_FACTORY(noteinput.value, today);
   NoteStorage.push(user);
@@ -27,8 +25,7 @@ function makeCard() {
   const noteactions = document.createElement("div");
 
   const emptyState = document.getElementById("empty-state");
-  const currentNoteObject = NoteStorage.pop();
-  count++;
+  const currentNoteObject = NoteStorage[NoteStorage.length - 1];
   dateCreated.textContent = `Date created: ${currentNoteObject.date}`;
   dateEdited.textContent = `Date edited: ${currentNoteObject.date}`;
   paragraph.textContent = currentNoteObject.note;
@@ -46,11 +43,11 @@ function makeCard() {
   noteMeta.appendChild(dateCreated);
   noteMeta.appendChild(dateEdited);
 
-  noteCounter(count);
+  noteCounter();
 }
 
-function noteCounter(count) {
-  noteCount.textContent = `${count} notes`;
+function noteCounter() {
+  noteCount.textContent = `${NoteStorage.length} notes`;
 }
 
 function newTheme() {
@@ -63,15 +60,22 @@ function newTheme() {
     : (changeTheme.textContent = "☀️");
 }
 
-let count = 0;
+function characterCounter() {
+  CharCount.textContent = `${noteinput.value.trim().length} characters`;
+}
 
+const NoteStorage = [];
+let spaceCount = 0;
+const wordCount = [];
 const today = new Date();
 
 const noteCount = document.getElementById("notes-count");
 const noteinput = document.getElementById("note-input");
 const saveNotes = document.querySelector("#save-note-btn");
 const changeTheme = document.getElementById("theme-toggle");
+const CharCount = document.getElementById("character-count");
 const body = document.querySelector("body");
 
 changeTheme.addEventListener("click", newTheme);
 saveNotes.addEventListener("click", store);
+noteinput.addEventListener("keyup", characterCounter);
