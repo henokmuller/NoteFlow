@@ -42,28 +42,123 @@
 
       <!-- ================= MAIN ================= -->
       <main class="main-content">
-        <!-- ================= NOTE EDITOR ================= -->
-        <section class="note-editor">
-          <h2>Write a note</h2>
+        <!-- ================= NOTES WORKSPACE ================= -->
+        <div class="notes-workspace">
+          <!-- ================= NOTES SIDEBAR ================= -->
+          <aside class="notes-sidebar">
+            <div class="sidebar-header">
+              <div>
+                <h2>Your Notes</h2>
+                <p id="notes-count">0 notes</p>
+              </div>
 
-          <textarea
-            autofocus
-            id="note-input"
-            placeholder="Write your thoughts here..."
-          ></textarea>
+              <button id="new-note-btn" class="new-note-btn" type="button">
+                + New
+              </button>
+            </div>
 
-          <div class="editor-footer">
-            <span id="character-count"> 0 characters </span>
+            <!-- ================= NOTES LIST ================= -->
+            <section class="notes-list" id="notes-list">
+              <!--
+                JavaScript will create note items here.
 
-            <button id="save-note-btn" type="button">Save Note</button>
-          </div>
-        </section>
+                Example structure that JS could eventually generate:
+
+                <article class="note-card">
+
+                  <div class="note-content">
+                    <h3>My Note Title</h3>
+                   
+                  </div>
+
+                  <div class="note-meta">
+                    <span>Created: Aug 15, 2026</span>
+                    <span>Edited: Aug 15, 2026</span>
+                  </div>
+
+                </article>
+
+                If the user does not provide a title,
+                JavaScript can use "Untitled" as the title.
+
+                JavaScript will:
+
+                1. Create the note element.
+                2. Create the title element.
+                3. Create the content preview.
+                4. Add the creation/edit dates.
+                5. Append the note to this list.
+                6. Allow a note to be selected.
+                7. Load the selected note into the editor.
+              -->
+
+              <div class="empty-state" id="empty-state">
+                <h3>No notes yet</h3>
+                <p>Your saved notes will appear here.</p>
+              </div>
+            </section>
+          </aside>
+
+          <!-- ================= NOTE EDITOR ================= -->
+          <section class="note-editor">
+            <div class="editor-header">
+              <div>
+                <span class="editor-label"> NOTE </span>
+
+                <p id="editor-status">New note</p>
+              </div>
+
+              <div class="note-actions">
+                <button id="delete-note-btn" class="delete-btn" type="button">
+                  Delete
+                </button>
+
+                <button id="save-note-btn" type="button">Save Note</button>
+              </div>
+            </div>
+
+            <!-- ================= NOTE TITLE ================= -->
+            <div class="title-container">
+              <label for="note-title"> Title </label>
+
+              <input
+                type="text"
+                id="note-title"
+                placeholder="Untitled"
+                maxlength="100"
+                autocomplete="off"
+              />
+            </div>
+
+            <!-- ================= NOTE CONTENT ================= -->
+            <div class="content-container">
+              <label for="note-input"> Content </label>
+
+              <textarea
+                autofocus
+                id="note-input"
+                placeholder="Write your thoughts here..."
+              ></textarea>
+            </div>
+
+            <!-- ================= EDITOR FOOTER ================= -->
+            <div class="editor-footer">
+              <span id="character-count"> 0 characters </span>
+
+              <div class="note-meta">
+                <span id="created-date"> Created: — </span>
+
+                <span id="edited-date"> Edited: — </span>
+              </div>
+            </div>
+          </section>
+        </div>
 
         <!-- ================= NOTES CONTROLS ================= -->
         <section class="notes-controls">
           <div>
-            <h2>Your Notes</h2>
-            <p id="notes-count">0 notes</p>
+            <h2>Sort Notes</h2>
+            <p>Choose how your notes are organized.</p>
           </div>
 
           <div class="sort-container">
@@ -78,38 +173,6 @@
 
               <option value="edited-oldest">Edited: Oldest</option>
             </select>
-          </div>
-        </section>
-
-        <!-- ================= NOTES LIST ================= -->
-        <section class="notes-list" id="notes-list">
-          <!--
-            JavaScript will create note cards here.
-
-            Example structure that JS could eventually generate:
-
-            <article class="note-card">
-
-              <div class="note-content">
-                <p>My note...</p>
-              </div>
-
-              <div class="note-meta">
-                <span>Created: Aug 15, 2026</span>
-                <span>Edited: Aug 15, 2026</span>
-              </div>
-
-              <div class="note-actions">
-                <button class="edit-btn">Edit</button>
-                <button class="delete-btn">Delete</button>
-              </div>
-
-            </article>
-          -->
-
-          <div class="empty-state" id="empty-state">
-            <h3>No notes yet</h3>
-            <p>Your saved notes will appear here.</p>
           </div>
         </section>
 

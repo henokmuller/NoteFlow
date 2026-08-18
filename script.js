@@ -1,14 +1,26 @@
 class NOTE_FACTORY {
   note;
-  date;
-  constructor(note, date) {
+  year;
+  month;
+  day;
+  title;
+  constructor(note, year, month, day, title = "Untitled") {
     this.note = note;
-    this.date = date;
+    this.day = day;
+    this.title = title;
+    this.month = month;
+    this.year = year;
   }
 }
 
 function store() {
-  const user = new NOTE_FACTORY(noteinput.value, today);
+  const user = new NOTE_FACTORY(
+    noteinput.value,
+    Year,
+    Month,
+    Day,
+    noteTitle.value || "Untitled"
+  );
   NoteStorage.push(user);
   makeCard();
 }
@@ -17,18 +29,14 @@ function makeCard() {
   const notesList = document.getElementById("notes-list");
   const noteCard = document.createElement("article");
   const noteContent = document.createElement("div");
-  const paragraph = document.createElement("p");
+  const title = document.createElement("h3");
   const noteMeta = document.createElement("div");
   const dateCreated = document.createElement("span");
   const dateEdited = document.createElement("span");
-
-  const noteactions = document.createElement("div");
-
   const emptyState = document.getElementById("empty-state");
   const currentNoteObject = NoteStorage[NoteStorage.length - 1];
-  dateCreated.textContent = `Date created: ${currentNoteObject.date}`;
-  dateEdited.textContent = `Date edited: ${currentNoteObject.date}`;
-  paragraph.textContent = currentNoteObject.note;
+  dateCreated.textContent = `${currentNoteObject.year}-0${currentNoteObject.month}-${currentNoteObject.day}`;
+  title.textContent = currentNoteObject.title;
 
   if (!!emptyState) emptyState.remove();
 
@@ -38,16 +46,17 @@ function makeCard() {
 
   notesList.appendChild(noteCard);
   noteCard.appendChild(noteContent);
-  noteContent.appendChild(paragraph);
+  noteContent.appendChild(title);
   noteCard.appendChild(noteMeta);
   noteMeta.appendChild(dateCreated);
-  noteMeta.appendChild(dateEdited);
-
-  noteCounter();
 }
 
 function noteCounter() {
   noteCount.textContent = `${NoteStorage.length} notes`;
+}
+
+function noteSelector() {
+  console.log(15);
 }
 
 function newTheme() {
@@ -64,20 +73,28 @@ function characterCounter() {
   CharCount.textContent = `${noteinput.value.length} characters`;
 }
 
-zenQuotesUrl = "https://zenquotes.io/api/today";
+function createNewNote() {
+  noteinput.value = "";
+  noteTitle.value = "";
+}
 
 const NoteStorage = [];
-let spaceCount = 0;
 const wordCount = [];
 const today = new Date();
+const Year = today.getUTCFullYear();
+const Month = today.getUTCMonth() + 1;
+const Day = today.getUTCDate();
 
 const noteCount = document.getElementById("notes-count");
 const noteinput = document.getElementById("note-input");
 const saveNotes = document.querySelector("#save-note-btn");
 const changeTheme = document.getElementById("theme-toggle");
 const CharCount = document.getElementById("character-count");
+const noteTitle = document.getElementById("note-title");
 const body = document.querySelector("body");
+const newNoteBtn = document.getElementById("new-note-btn");
 
 changeTheme.addEventListener("click", newTheme);
 saveNotes.addEventListener("click", store);
 noteinput.addEventListener("keyup", characterCounter);
+newNoteBtn.addEventListener("click", createNewNote);
