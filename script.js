@@ -61,8 +61,10 @@ function newTheme() {
 }
 
 function characterCounter() {
-  CharCount.textContent = `${noteinput.value.trim().length} characters`;
+  CharCount.textContent = `${noteinput.value.length} characters`;
 }
+
+zenQuotesUrl = "https://zenquotes.io/api/today";
 
 const NoteStorage = [];
 let spaceCount = 0;
