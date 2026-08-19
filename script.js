@@ -4,26 +4,35 @@ class NOTE_FACTORY {
   month;
   day;
   title;
-  id;
-  constructor(note, year, month, day, title = "Untitled", id = 1) {
+  constructor(note, year, month, day, title = "Untitled") {
     this.note = note;
     this.day = day;
     this.title = title;
     this.month = month;
     this.year = year;
-    this.id = id;
   }
 }
 
 function store() {
-  cardCounter++;
+  if (editStatus === 1) {
+    NoteStorage[cardID].note = noteinput.value;
+    NoteStorage[cardID].title = noteTitle.value || "untitled";
+    document.querySelector(
+      `#${CSS.escape(cardID)} .note-content h3`
+    ).textContent = noteTitle.value || "Untitled";
+    noteinput.disabled = false;
+    noteTitle.disabled = false;
+    clearSession();
+    editStatus = null;
+    return;
+  }
+
   const user = new NOTE_FACTORY(
     noteinput.value,
     Year,
     Month,
     Day,
-    noteTitle.value || "Untitled",
-    cardCounter
+    noteTitle.value || "Untitled"
   );
   NoteStorage.push(user);
   makeCard();
@@ -55,7 +64,7 @@ function makeCard() {
   noteContent.appendChild(title);
   noteCard.appendChild(noteMeta);
   noteMeta.appendChild(dateCreated);
-  noteCard.id = `${cardCounter}`;
+  noteCard.id = `${NoteStorage.length - 1}`;
 }
 
 function noteCounter() {
@@ -77,29 +86,14 @@ function characterCounter() {
 }
 
 function enableCardSelection() {
-  const noteC = document.querySelectorAll(".note-card");
-  noteC.forEach((element) => {
+  const enabledCards = document.querySelectorAll(".note-card");
+  enabledCards.forEach((element) => {
     element.addEventListener("click", () => {
+      cardID = Number(element.id);
       noteinput.disabled = true;
       noteTitle.disabled = true;
-      noteTitle.value = NoteStorage[element.id - 1].title;
-      noteinput.value = NoteStorage[element.id - 1].note;
-      deleteNoteBtn.addEventListener("click", () => {
-        const goneCard = document.getElementById(`${element.id}`);
-        clearSession();
-        let arr = [];
-        for (let i = 0; i <= element.id - 1; i++) {
-          if (NoteStorage[i].id != element.id) {
-            arr.push(NoteStorage.shift());
-          } else {
-            delete NoteStorage[i];
-            for (let j = 0; j < arr.length; j++) {
-              NoteStorage.unshift(arr.reverse.shift());
-            }
-            goneCard.remove();
-          }
-        }
-      });
+      noteTitle.value = NoteStorage[element.id].title;
+      noteinput.value = NoteStorage[element.id].note;
     });
   });
 }
@@ -109,13 +103,44 @@ function clearSession() {
   noteTitle.value = "";
 }
 
+function deleteNote() {
+  if (cardID === null) return;
+  document.getElementById(`${cardID}`).remove();
+  clearSession();
+  NoteStorage.splice(cardID, 1);
+
+  document.querySelectorAll(".note-card").forEach((element, index) => {
+    element.id = index;
+  });
+
+  cardID = null;
+  noteCounter();
+}
+
+function addNewNote() {
+  const user = new NOTE_FACTORY("", Year, Month, Day, "Untitled");
+  NoteStorage.push(user);
+  makeCard();
+  clearSession();
+  enableCardSelection();
+  noteCounter();
+}
+
+function editNote() {
+  if (cardID === null) return;
+  noteinput.disabled = false;
+  noteTitle.disabled = false;
+  editStatus = 1;
+}
+
 const NoteStorage = [];
 const wordCount = [];
 const today = new Date();
 const Year = today.getUTCFullYear();
 const Month = today.getUTCMonth() + 1;
 const Day = today.getUTCDate();
-let cardCounter = 0;
+let cardID = null;
+let editStatus = null;
 
 const notesList = document.getElementById("notes-list");
 const noteCount = document.getElementById("notes-count");
@@ -127,7 +152,11 @@ const noteTitle = document.getElementById("note-title");
 const body = document.querySelector("body");
 const newNoteBtn = document.getElementById("new-note-btn");
 const deleteNoteBtn = document.getElementById("delete-note-btn");
+const editNoteBtn = document.getElementById("edit-note-btn");
 
 changeTheme.addEventListener("click", newTheme);
 saveNotes.addEventListener("click", store);
 noteinput.addEventListener("keyup", characterCounter);
+deleteNoteBtn.addEventListener("click", deleteNote);
+newNoteBtn.addEventListener("click", addNewNote);
+editNoteBtn.addEventListener("click", editNote);
