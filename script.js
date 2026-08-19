@@ -118,19 +118,31 @@ function deleteNote() {
 }
 
 function addNewNote() {
-  const user = new NOTE_FACTORY("", Year, Month, Day, "Untitled");
-  NoteStorage.push(user);
-  makeCard();
+  if (editStatus === 1) {
+    NoteStorage[cardID].note = noteinput.value;
+    NoteStorage[cardID].title = noteTitle.value || "untitled";
+    document.querySelector(
+      `#${CSS.escape(cardID)} .note-content h3`
+    ).textContent = noteTitle.value || "Untitled";
+    noteinput.disabled = false;
+    noteTitle.disabled = false;
+    clearSession();
+    editStatus = null;
+    return;
+  }
+  noteinput.disabled = false;
+  noteTitle.disabled = false;
   clearSession();
-  enableCardSelection();
-  noteCounter();
 }
 
 function editNote() {
   if (cardID === null) return;
+  if (noteinput.value === "" && noteTitle.value === "") {
+    return;
+  }
+  editStatus = 1;
   noteinput.disabled = false;
   noteTitle.disabled = false;
-  editStatus = 1;
 }
 
 const NoteStorage = [];
