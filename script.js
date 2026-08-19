@@ -165,6 +165,7 @@ const body = document.querySelector("body");
 const newNoteBtn = document.getElementById("new-note-btn");
 const deleteNoteBtn = document.getElementById("delete-note-btn");
 const editNoteBtn = document.getElementById("edit-note-btn");
+const sortSelect = document.getElementById("sort-select");
 
 changeTheme.addEventListener("click", newTheme);
 saveNotes.addEventListener("click", store);
@@ -172,3 +173,21 @@ noteinput.addEventListener("keyup", characterCounter);
 deleteNoteBtn.addEventListener("click", deleteNote);
 newNoteBtn.addEventListener("click", addNewNote);
 editNoteBtn.addEventListener("click", editNote);
+
+sortSelect.addEventListener("change", (optionval) => {
+  const cards = [...document.querySelectorAll(".note-card")];
+
+  if (optionval.target.value == "created-oldest") {
+    cards.sort((a, b) => {
+      return Number(a.id) - Number(b.id);
+    });
+  } else if (optionval.target.value == "created-newest") {
+    cards.sort((a, b) => {
+      return Number(b.id) - Number(a.id);
+    });
+  }
+
+  cards.forEach((card) => {
+    notesList.appendChild(card);
+  });
+});
