@@ -94,6 +94,7 @@ function enableCardSelection() {
       noteTitle.disabled = true;
       noteTitle.value = NoteStorage[element.id].title;
       noteinput.value = NoteStorage[element.id].note;
+      characterCounter();
     });
   });
 }
@@ -101,6 +102,7 @@ function enableCardSelection() {
 function clearSession() {
   noteinput.value = "";
   noteTitle.value = "";
+  characterCounter();
 }
 
 function deleteNote() {
@@ -186,7 +188,6 @@ noteinput.addEventListener("keyup", characterCounter);
 deleteNoteBtn.addEventListener("click", deleteNote);
 newNoteBtn.addEventListener("click", addNewNote);
 editNoteBtn.addEventListener("click", editNote);
-
 searchInput.addEventListener("keyup", searchNotes);
 sortSelect.addEventListener("change", (optionval) => {
   const cards = [...document.querySelectorAll(".note-card")];
