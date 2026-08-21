@@ -23,6 +23,7 @@ function store() {
     noteinput.disabled = false;
     noteTitle.disabled = false;
     clearSession();
+    CardHIghlight();
     editStatus = null;
     return;
   }
@@ -37,6 +38,7 @@ function store() {
   NoteStorage.push(user);
   makeCard();
   clearSession();
+  CardHIghlight();
   enableCardSelection();
   noteCounter();
 }
@@ -85,6 +87,13 @@ function characterCounter() {
   CharCount.textContent = `${noteinput.value.length} characters`;
 }
 
+function setActiveCard(activeElement) {
+  document.querySelectorAll(".note-card.active").forEach((el) => {
+    el.classList.remove("active");
+  });
+  if (activeElement) activeElement.classList.add("active");
+}
+
 function enableCardSelection() {
   const enabledCards = document.querySelectorAll(".note-card");
   enabledCards.forEach((element) => {
@@ -95,6 +104,7 @@ function enableCardSelection() {
       noteTitle.value = NoteStorage[element.id].title;
       noteinput.value = NoteStorage[element.id].note;
       characterCounter();
+      setActiveCard(element);
     });
   });
 }
@@ -116,6 +126,7 @@ function deleteNote() {
   });
 
   cardID = null;
+  setActiveCard(null);
   noteCounter();
 }
 
@@ -130,11 +141,13 @@ function addNewNote() {
     noteTitle.disabled = false;
     clearSession();
     editStatus = null;
+    setActiveCard(null);
     return;
   }
   noteinput.disabled = false;
   noteTitle.disabled = false;
   clearSession();
+  setActiveCard(null);
 }
 
 function editNote() {
@@ -157,6 +170,11 @@ function searchNotes() {
       element.style.display = "";
     } else element.style.display = "none";
   });
+}
+
+function CardHIghlight(){
+  if(cardID === null) return;
+ document.getElementById(`${cardID}`).classList.remove("active") 
 }
 
 const NoteStorage = [];

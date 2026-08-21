@@ -254,7 +254,7 @@ select:focus-visible {
 .notes-workspace {
   display: grid;
   grid-template-columns: 270px 1fr;
-  min-height: 550px;
+  height: 550px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -274,6 +274,8 @@ select:focus-visible {
   background: var(--surface-secondary);
   border-right: 1px solid var(--border);
   min-width: 0;
+  min-height: 0;
+  overflow: hidden;
   transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
@@ -340,20 +342,45 @@ select:focus-visible {
   padding: 8px;
   overflow-y: auto;
   flex: 1;
+  min-height: 0;
 }
 
-/* scrollbar styling */
+/* scrollbar — thin, auto-hiding, Ink & Paper palette */
+.notes-list {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.3s ease;
+}
+
+.notes-list:hover {
+  scrollbar-color: var(--border) transparent;
+}
+
 .notes-list::-webkit-scrollbar {
-  width: 5px;
+  width: 6px;
 }
 
 .notes-list::-webkit-scrollbar-track {
   background: transparent;
+  margin: 6px 0;
 }
 
 .notes-list::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 100px;
+  transition: background-color 0.3s ease;
+}
+
+.notes-list:hover::-webkit-scrollbar-thumb {
   background: var(--border);
-  border-radius: 4px;
+}
+
+.notes-list::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+.notes-list::-webkit-scrollbar-thumb:active {
+  background: var(--text-secondary);
 }
 
 /* =========================
@@ -363,16 +390,30 @@ select:focus-visible {
 .note-card {
   padding: 12px 14px;
   background: transparent;
-  border: 1px solid transparent;
-  border-radius: var(--radius-sm);
+  border: none;
+  border-left: 3px solid transparent;
+  border-radius: 0;
   cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+  transition: background-color 0.2s, border-color 0.2s;
 }
 
 .note-card:hover {
-  background: var(--surface);
-  border-color: var(--border);
-  box-shadow: var(--shadow-sm);
+  background: var(--surface-secondary);
+  border-left-color: var(--border);
+}
+
+.note-card.active {
+  background: var(--primary-ghost);
+  border-left: 3px solid var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary-ring), var(--shadow-sm);
+}
+
+.note-card.active .note-content h3 {
+  color: var(--primary);
+}
+
+.note-card.active .note-meta {
+  color: var(--text-secondary);
 }
 
 /* =========================
@@ -444,6 +485,9 @@ select:focus-visible {
   padding: 28px 32px;
   background: var(--surface);
   border-left: 3px solid var(--primary);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
   transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
@@ -624,6 +668,10 @@ body.dark-theme .note-editor {
 
 .content-container {
   margin-top: 18px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 /* =========================
@@ -632,9 +680,10 @@ body.dark-theme .note-editor {
 
 #note-input {
   width: 100%;
-  min-height: 280px;
+  flex: 1;
+  min-height: 120px;
   padding: 14px;
-  resize: vertical;
+  resize: none;
   border: 1px solid var(--border-input);
   border-radius: var(--radius-sm);
   background: var(--surface);
