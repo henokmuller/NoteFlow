@@ -2,35 +2,52 @@
    RESET
 ========================= */
 
-* {
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
 /* =========================
-   THEME VARIABLES
+   THEME VARIABLES — Ink & Paper
 ========================= */
 
 :root {
-  --background: #f5f7fb;
+  --background: #f6f4f0;
   --surface: #ffffff;
-  --surface-secondary: #f9fafb;
+  --surface-secondary: #ede9e3;
 
-  --text: #1f2937;
-  --text-secondary: #6b7280;
-  --text-muted: #9ca3af;
+  --text: #2c2a28;
+  --text-secondary: #7a7570;
+  --text-muted: #b0aaa2;
 
-  --border: #e5e7eb;
-  --border-input: #d1d5db;
+  --border: #ddd8d0;
+  --border-input: #cbc5bb;
 
-  --primary: #4f46e5;
-  --primary-hover: #4338ca;
+  --primary: #2d6a4f;
+  --primary-hover: #1b4332;
+  --primary-ghost: rgba(45, 106, 79, 0.08);
+  --primary-ring: rgba(45, 106, 79, 0.18);
 
-  --danger: #dc2626;
+  --danger: #c1292e;
+  --danger-ghost: rgba(193, 41, 46, 0.07);
 
-  --quote-background: #111827;
-  --quote-text: #ffffff;
+  --quote-background: #1b1b1f;
+  --quote-text: #f6f4f0;
+  --quote-muted: #918d86;
+
+  --shadow-sm: 0 1px 3px rgba(44, 42, 40, 0.04);
+  --shadow-md: 0 4px 16px rgba(44, 42, 40, 0.06);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 14px;
+
+  --font-display: "Instrument Serif", Georgia, serif;
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Code", "Fira Code", monospace;
 }
 
 /* =========================
@@ -38,24 +55,31 @@
 ========================= */
 
 body.dark-theme {
-  --background: #111827;
-  --surface: #1f2937;
-  --surface-secondary: #374151;
+  --background: #161821;
+  --surface: #1e2030;
+  --surface-secondary: #282a3a;
 
-  --text: #f9fafb;
-  --text-secondary: #d1d5db;
-  --text-muted: #9ca3af;
+  --text: #e8e6e1;
+  --text-secondary: #a09b94;
+  --text-muted: #6b665f;
 
-  --border: #374151;
-  --border-input: #4b5563;
+  --border: #333546;
+  --border-input: #3e4052;
 
-  --primary: #6366f1;
-  --primary-hover: #818cf8;
+  --primary: #52b788;
+  --primary-hover: #74c69d;
+  --primary-ghost: rgba(82, 183, 136, 0.1);
+  --primary-ring: rgba(82, 183, 136, 0.22);
 
-  --danger: #f87171;
+  --danger: #f28482;
+  --danger-ghost: rgba(242, 132, 130, 0.1);
 
-  --quote-background: #030712;
-  --quote-text: #ffffff;
+  --quote-background: #0d0e14;
+  --quote-text: #e8e6e1;
+  --quote-muted: #6b665f;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 /* =========================
@@ -63,14 +87,42 @@ body.dark-theme {
 ========================= */
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
-
+  font-family: var(--font-body);
   background: var(--background);
   color: var(--text);
-
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
 
-  transition: background-color 0.25s ease, color 0.25s ease;
+/* =========================
+   FOCUS VISIBLE — Accessibility
+========================= */
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+}
+
+/* =========================
+   REDUCED MOTION
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* =========================
@@ -79,7 +131,6 @@ body {
 
 .app {
   min-height: 100vh;
-
   display: flex;
   flex-direction: column;
 }
@@ -90,30 +141,29 @@ body {
 
 .header {
   width: 100%;
-
-  padding: 25px 8%;
-
+  padding: 20px 8%;
   background: var(--surface);
-
   border-bottom: 1px solid var(--border);
-
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   gap: 30px;
-
-  transition: background-color 0.25s ease, border-color 0.25s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .logo h1 {
-  font-size: 28px;
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
   color: var(--text);
+  line-height: 1.1;
 }
 
 .logo p {
-  font-size: 14px;
-  color: var(--text-secondary);
+  font-size: 13px;
+  color: var(--text-muted);
+  letter-spacing: 0.01em;
 }
 
 /* =========================
@@ -122,10 +172,8 @@ body {
 
 .header-actions {
   display: flex;
-
   align-items: center;
-
-  gap: 12px;
+  gap: 10px;
 }
 
 /* =========================
@@ -133,26 +181,20 @@ body {
 ========================= */
 
 .search-container {
-  width: 350px;
+  width: 320px;
 }
 
 #search-input {
   width: 100%;
-
-  padding: 12px 16px;
-
+  padding: 10px 14px;
   border: 1px solid var(--border-input);
-  border-radius: 8px;
-
+  border-radius: var(--radius-sm);
   background: var(--surface);
   color: var(--text);
-
-  font-size: 15px;
-
+  font-family: var(--font-body);
+  font-size: 14px;
   outline: none;
-
-  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.25s ease,
-    color 0.25s ease;
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.3s ease;
 }
 
 #search-input::placeholder {
@@ -161,8 +203,7 @@ body {
 
 #search-input:focus {
   border-color: var(--primary);
-
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  box-shadow: 0 0 0 3px var(--primary-ring);
 }
 
 /* =========================
@@ -170,30 +211,23 @@ body {
 ========================= */
 
 .theme-toggle {
-  width: 44px;
-  height: 44px;
-
+  width: 42px;
+  height: 42px;
   display: flex;
-
   align-items: center;
   justify-content: center;
-
   border: 1px solid var(--border-input);
-
-  border-radius: 8px;
-
+  border-radius: var(--radius-sm);
   background: var(--surface);
   color: var(--text);
-
-  font-size: 19px;
-
+  font-size: 18px;
   cursor: pointer;
-
   transition: background-color 0.2s, border-color 0.2s, transform 0.15s;
 }
 
 .theme-toggle:hover {
   background: var(--surface-secondary);
+  border-color: var(--primary);
 }
 
 .theme-toggle:active {
@@ -206,15 +240,10 @@ body {
 
 .main-content {
   width: min(1100px, 90%);
-
-  margin: 40px auto;
-
+  margin: 36px auto;
   display: flex;
-
   flex-direction: column;
-
-  gap: 30px;
-
+  gap: 24px;
   flex: 1;
 }
 
@@ -224,22 +253,15 @@ body {
 
 .notes-workspace {
   display: grid;
-
-  grid-template-columns: 280px 1fr;
-
+  grid-template-columns: 270px 1fr;
   min-height: 550px;
-
   background: var(--surface);
-
   border: 1px solid var(--border);
-
-  border-radius: 12px;
-
+  border-radius: var(--radius-lg);
   overflow: hidden;
-
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
-
-  transition: background-color 0.25s ease, border-color 0.25s ease;
+  box-shadow: var(--shadow-md);
+  transition: background-color 0.3s ease, border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 /* =========================
@@ -248,14 +270,11 @@ body {
 
 .notes-sidebar {
   display: flex;
-
   flex-direction: column;
-
   background: var(--surface-secondary);
-
   border-right: 1px solid var(--border);
-
   min-width: 0;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 /* =========================
@@ -263,31 +282,25 @@ body {
 ========================= */
 
 .sidebar-header {
-  padding: 20px;
-
+  padding: 18px 16px;
   display: flex;
-
   align-items: center;
-
   justify-content: space-between;
-
   gap: 10px;
-
   border-bottom: 1px solid var(--border);
 }
 
 .sidebar-header h2 {
-  font-size: 18px;
-
+  font-size: 15px;
+  font-weight: 600;
   color: var(--text);
+  letter-spacing: -0.01em;
 }
 
 .sidebar-header p {
-  margin-top: 2px;
-
-  font-size: 13px;
-
-  color: var(--text-secondary);
+  margin-top: 1px;
+  font-size: 12px;
+  color: var(--text-muted);
 }
 
 /* =========================
@@ -295,24 +308,16 @@ body {
 ========================= */
 
 .new-note-btn {
-  padding: 7px 11px;
-
+  padding: 7px 12px;
   border: none;
-
   border-radius: 6px;
-
   background: var(--primary);
-
-  color: white;
-
+  color: #fff;
+  font-family: var(--font-body);
   font-size: 13px;
-
   font-weight: 600;
-
   cursor: pointer;
-
   white-space: nowrap;
-
   transition: background-color 0.2s, transform 0.1s;
 }
 
@@ -330,16 +335,25 @@ body {
 
 .notes-list {
   display: flex;
-
   flex-direction: column;
-
-  gap: 4px;
-
+  gap: 2px;
   padding: 8px;
-
   overflow-y: auto;
-
   flex: 1;
+}
+
+/* scrollbar styling */
+.notes-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.notes-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.notes-list::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
 }
 
 /* =========================
@@ -347,23 +361,18 @@ body {
 ========================= */
 
 .note-card {
-  padding: 14px;
-
+  padding: 12px 14px;
   background: transparent;
-
   border: 1px solid transparent;
-
-  border-radius: 8px;
-
+  border-radius: var(--radius-sm);
   cursor: pointer;
-
-  transition: background-color 0.2s, border-color 0.2s;
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
 }
 
 .note-card:hover {
   background: var(--surface);
-
   border-color: var(--border);
+  box-shadow: var(--shadow-sm);
 }
 
 /* =========================
@@ -371,34 +380,25 @@ body {
 ========================= */
 
 .note-content {
-  margin-bottom: 8px;
-
+  margin-bottom: 6px;
   min-width: 0;
 }
 
 .note-content h3 {
-  margin-bottom: 3px;
-
+  margin-bottom: 2px;
   overflow: hidden;
-
   text-overflow: ellipsis;
-
   white-space: nowrap;
-
   font-size: 14px;
-
+  font-weight: 600;
   color: var(--text);
 }
 
 .note-content p {
   overflow: hidden;
-
   text-overflow: ellipsis;
-
   white-space: nowrap;
-
   font-size: 12px;
-
   color: var(--text-secondary);
 }
 
@@ -408,11 +408,8 @@ body {
 
 .note-meta {
   display: flex;
-
   gap: 8px;
-
   font-size: 11px;
-
   color: var(--text-muted);
 }
 
@@ -422,36 +419,36 @@ body {
 
 .empty-state {
   text-align: center;
-
-  padding: 40px 15px;
-
+  padding: 48px 16px;
   color: var(--text-secondary);
 }
 
 .empty-state h3 {
-  margin-bottom: 5px;
-
+  margin-bottom: 6px;
   color: var(--text);
-
   font-size: 15px;
+  font-weight: 600;
 }
 
 .empty-state p {
   font-size: 13px;
+  color: var(--text-muted);
 }
 
 /* =========================
-   NOTE EDITOR
+   NOTE EDITOR — with Ink Strip signature
 ========================= */
 
 .note-editor {
   min-width: 0;
-
-  padding: 30px;
-
+  padding: 28px 32px;
   background: var(--surface);
+  border-left: 3px solid var(--primary);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
 
-  transition: background-color 0.25s ease;
+body.dark-theme .note-editor {
+  box-shadow: inset 3px 0 12px -4px var(--primary-ring);
 }
 
 /* =========================
@@ -460,34 +457,25 @@ body {
 
 .editor-header {
   display: flex;
-
   align-items: center;
-
   justify-content: space-between;
-
   gap: 20px;
-
-  padding-bottom: 20px;
-
+  padding-bottom: 18px;
   border-bottom: 1px solid var(--border);
 }
 
 .editor-label {
   font-size: 11px;
-
   font-weight: 700;
-
-  letter-spacing: 1px;
-
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
   color: var(--primary);
 }
 
 #editor-status {
   margin-top: 2px;
-
   font-size: 13px;
-
-  color: var(--text-secondary);
+  color: var(--text-muted);
 }
 
 /* =========================
@@ -496,24 +484,19 @@ body {
 
 .note-actions {
   display: flex;
-
   align-items: center;
-
-  gap: 8px;
+  gap: 6px;
 }
 
 .note-actions button {
-  padding: 9px 14px;
-
+  padding: 8px 14px;
   border-radius: 7px;
-
+  font-family: var(--font-body);
   font-size: 13px;
-
   font-weight: 600;
-
   cursor: pointer;
-
-  transition: background-color 0.2s, border-color 0.2s, transform 0.1s;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s,
+    transform 0.1s;
 }
 
 .note-actions button:active {
@@ -526,46 +509,36 @@ body {
 
 .delete-btn {
   border: 1px solid var(--border-input);
-
   background: var(--surface);
-
   color: var(--danger);
 }
 
 .delete-btn:hover {
-  background: var(--surface-secondary);
-
+  background: var(--danger-ghost);
   border-color: var(--danger);
 }
+
 /* =========================
    EDIT BUTTON
 ========================= */
 
 .edit-btn {
   border: 1px solid var(--border-input);
-
   background: var(--surface);
-
   color: var(--text);
-
-  padding: 9px 14px;
-
+  padding: 8px 14px;
   border-radius: 7px;
-
+  font-family: var(--font-body);
   font-size: 13px;
-
   font-weight: 600;
-
   cursor: pointer;
-
-  transition: background-color 0.2s, border-color 0.2s, transform 0.1s;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s,
+    transform 0.1s;
 }
 
 .edit-btn:hover {
-  background: var(--surface-secondary);
-
+  background: var(--primary-ghost);
   border-color: var(--primary);
-
   color: var(--primary);
 }
 
@@ -579,21 +552,14 @@ body {
 
 #save-note-btn {
   border: none;
-
   border-radius: 7px;
-
-  padding: 9px 16px;
-
+  padding: 8px 16px;
   background: var(--primary);
-
-  color: white;
-
+  color: #fff;
+  font-family: var(--font-body);
   font-size: 13px;
-
   font-weight: 600;
-
   cursor: pointer;
-
   transition: background-color 0.2s, transform 0.1s;
 }
 
@@ -610,61 +576,46 @@ body {
 ========================= */
 
 .title-container {
-  margin-top: 25px;
+  margin-top: 22px;
 }
 
 .title-container label,
 .content-container label {
   display: block;
-
-  margin-bottom: 7px;
-
-  font-size: 13px;
-
+  margin-bottom: 6px;
+  font-size: 11px;
   font-weight: 600;
-
-  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
 
 /* =========================
-   NOTE TITLE
+   NOTE TITLE INPUT
 ========================= */
 
 #note-title {
   width: 100%;
-
-  padding: 12px 14px;
-
+  padding: 10px 14px;
   border: 1px solid var(--border-input);
-
-  border-radius: 8px;
-
+  border-radius: var(--radius-sm);
   background: var(--surface);
-
   color: var(--text);
-
-  font-family: inherit;
-
+  font-family: var(--font-body);
   font-size: 18px;
-
   font-weight: 600;
-
   outline: none;
-
-  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.25s ease,
-    color 0.25s ease;
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.3s ease;
 }
 
 #note-title::placeholder {
   color: var(--text-muted);
-
   font-weight: 400;
 }
 
 #note-title:focus {
   border-color: var(--primary);
-
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  box-shadow: 0 0 0 3px var(--primary-ring);
 }
 
 /* =========================
@@ -672,7 +623,7 @@ body {
 ========================= */
 
 .content-container {
-  margin-top: 20px;
+  margin-top: 18px;
 }
 
 /* =========================
@@ -681,31 +632,18 @@ body {
 
 #note-input {
   width: 100%;
-
   min-height: 280px;
-
-  padding: 15px;
-
+  padding: 14px;
   resize: vertical;
-
   border: 1px solid var(--border-input);
-
-  border-radius: 8px;
-
+  border-radius: var(--radius-sm);
   background: var(--surface);
-
   color: var(--text);
-
-  font-family: inherit;
-
+  font-family: var(--font-body);
   font-size: 15px;
-
-  line-height: 1.7;
-
+  line-height: 1.75;
   outline: none;
-
-  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.25s ease,
-    color 0.25s ease;
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.3s ease;
 }
 
 #note-input::placeholder {
@@ -714,8 +652,7 @@ body {
 
 #note-input:focus {
   border-color: var(--primary);
-
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  box-shadow: 0 0 0 3px var(--primary-ring);
 }
 
 /* =========================
@@ -723,34 +660,26 @@ body {
 ========================= */
 
 .editor-footer {
-  margin-top: 15px;
-
+  margin-top: 14px;
   display: flex;
-
   justify-content: space-between;
-
   align-items: center;
-
   gap: 20px;
-
-  padding-top: 15px;
-
+  padding-top: 14px;
   border-top: 1px solid var(--border);
 }
 
 #character-count {
-  font-size: 13px;
-
-  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: -0.02em;
 }
 
 .editor-footer .note-meta {
   display: flex;
-
-  gap: 15px;
-
+  gap: 14px;
   font-size: 12px;
-
   color: var(--text-muted);
 }
 
@@ -760,32 +689,26 @@ body {
 
 .notes-controls {
   display: flex;
-
   justify-content: space-between;
-
   align-items: center;
-
   gap: 20px;
-
-  padding: 20px;
-
+  padding: 18px 20px;
   background: var(--surface);
-
   border: 1px solid var(--border);
-
-  border-radius: 10px;
-
-  transition: background-color 0.25s ease, border-color 0.25s ease;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .notes-controls h2 {
-  font-size: 18px;
+  font-size: 15px;
+  font-weight: 600;
 }
 
 .notes-controls p {
   font-size: 13px;
-
   color: var(--text-secondary);
+  margin-top: 1px;
 }
 
 /* =========================
@@ -794,87 +717,85 @@ body {
 
 .sort-container {
   display: flex;
-
   align-items: center;
-
   gap: 10px;
 }
 
 .sort-container label {
-  font-size: 14px;
-
+  font-size: 13px;
   color: var(--text-secondary);
+  white-space: nowrap;
 }
 
 #sort-select {
-  padding: 9px 12px;
-
+  padding: 8px 12px;
   border: 1px solid var(--border-input);
-
   border-radius: 7px;
-
   background: var(--surface);
-
   color: var(--text);
-
-  font-size: 14px;
-
+  font-family: var(--font-body);
+  font-size: 13px;
   outline: none;
-
   cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
 
-  transition: background-color 0.25s ease, color 0.25s ease,
-    border-color 0.25s ease;
+#sort-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-ring);
 }
 
 /* =========================
-   DAILY QUOTE
+   DAILY QUOTE — Signature typography moment
 ========================= */
 
 .daily-quote {
-  padding: 30px;
-
+  padding: 36px 32px;
   background: var(--quote-background);
-
   color: var(--quote-text);
-
-  border-radius: 12px;
-
+  border-radius: var(--radius-lg);
   text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: background-color 0.3s ease;
+}
 
-  transition: background-color 0.25s ease;
+/* subtle decorative line above the quote */
+.daily-quote::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48px;
+  height: 2px;
+  background: var(--primary);
+  border-radius: 1px;
 }
 
 .quote-header {
-  margin-bottom: 15px;
-
-  font-size: 13px;
-
+  margin-bottom: 18px;
+  font-size: 11px;
   font-weight: 600;
-
   text-transform: uppercase;
-
-  letter-spacing: 1px;
-
-  color: #9ca3af;
+  letter-spacing: 2px;
+  color: var(--quote-muted);
 }
 
 #quote-text {
-  max-width: 700px;
-
-  margin: 0 auto 15px;
-
-  font-size: 20px;
-
+  max-width: 640px;
+  margin: 0 auto 16px;
+  font-family: var(--font-display);
+  font-size: 22px;
   font-style: italic;
-
-  line-height: 1.6;
+  line-height: 1.5;
+  color: var(--quote-text);
 }
 
 #quote-author {
-  font-size: 14px;
-
-  color: #9ca3af;
+  font-size: 13px;
+  color: var(--quote-muted);
+  letter-spacing: 0.02em;
 }
 
 /* =========================
@@ -882,37 +803,29 @@ body {
 ========================= */
 
 .footer {
-  padding: 20px;
-
+  padding: 18px 20px;
   text-align: center;
-
   border-top: 1px solid var(--border);
-
   background: var(--surface);
-
-  font-size: 13px;
-
+  font-size: 12px;
   color: var(--text-muted);
-
-  transition: background-color 0.25s ease, border-color 0.25s ease;
+  letter-spacing: 0.02em;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 /* =========================
-   RESPONSIVE
+   RESPONSIVE — 800px
 ========================= */
 
 @media (max-width: 800px) {
   .notes-workspace {
     grid-template-columns: 1fr;
-
     min-height: auto;
   }
 
   .notes-sidebar {
     border-right: none;
-
     border-bottom: 1px solid var(--border);
-
     max-height: 300px;
   }
 
@@ -921,15 +834,25 @@ body {
   }
 
   .note-editor {
-    padding: 25px;
+    padding: 24px 20px;
+    border-left: none;
+    border-top: 3px solid var(--primary);
+  }
+
+  body.dark-theme .note-editor {
+    box-shadow: inset 0 3px 12px -4px var(--primary-ring);
   }
 }
+
+/* =========================
+   RESPONSIVE — 700px
+========================= */
 
 @media (max-width: 700px) {
   .header {
     flex-direction: column;
-
     align-items: stretch;
+    gap: 14px;
   }
 
   .header-actions {
@@ -938,6 +861,7 @@ body {
 
   .search-container {
     width: 100%;
+    flex: 1;
   }
 
   .theme-toggle {
@@ -946,8 +870,8 @@ body {
 
   .editor-header {
     flex-direction: column;
-
     align-items: stretch;
+    gap: 12px;
   }
 
   .note-actions {
@@ -956,19 +880,17 @@ body {
 
   .editor-footer {
     flex-direction: column;
-
     align-items: flex-start;
+    gap: 8px;
   }
 
   .editor-footer .note-meta {
     flex-direction: column;
-
     gap: 3px;
   }
 
   .notes-controls {
     flex-direction: column;
-
     align-items: stretch;
   }
 
@@ -978,5 +900,13 @@ body {
 
   #sort-select {
     flex: 1;
+  }
+
+  .daily-quote {
+    padding: 28px 20px;
+  }
+
+  #quote-text {
+    font-size: 19px;
   }
 }
