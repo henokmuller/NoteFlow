@@ -145,6 +145,18 @@ function editNote() {
   noteTitle.disabled = false;
 }
 
+function searchNotes() {
+  document.querySelectorAll(".note-card").forEach((element) => {
+    if (
+      element.textContent
+        .toLowerCase()
+        .includes(searchInput.value.toLowerCase())
+    ) {
+      element.style.display = "";
+    } else element.style.display = "none";
+  });
+}
+
 const NoteStorage = [];
 const wordCount = [];
 const today = new Date();
@@ -166,6 +178,7 @@ const newNoteBtn = document.getElementById("new-note-btn");
 const deleteNoteBtn = document.getElementById("delete-note-btn");
 const editNoteBtn = document.getElementById("edit-note-btn");
 const sortSelect = document.getElementById("sort-select");
+const searchInput = document.getElementById("search-input");
 
 changeTheme.addEventListener("click", newTheme);
 saveNotes.addEventListener("click", store);
@@ -174,6 +187,7 @@ deleteNoteBtn.addEventListener("click", deleteNote);
 newNoteBtn.addEventListener("click", addNewNote);
 editNoteBtn.addEventListener("click", editNote);
 
+searchInput.addEventListener("keyup", searchNotes);
 sortSelect.addEventListener("change", (optionval) => {
   const cards = [...document.querySelectorAll(".note-card")];
 
