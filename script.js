@@ -55,7 +55,7 @@ function makeCard() {
   dateCreated.textContent = `${currentNoteObject.day}-0${currentNoteObject.month}-${currentNoteObject.year}`;
   title.textContent = currentNoteObject.title;
 
-  if (!!emptyState) emptyState.remove();
+  if (emptyState) emptyState.remove();
 
   noteCard.classList.toggle("note-card");
   noteContent.classList.toggle("note-content");
@@ -101,6 +101,7 @@ function enableCardSelection() {
       cardID = Number(element.id);
       noteinput.disabled = true;
       noteTitle.disabled = true;
+      saveNotes.disabled = true;
       noteTitle.value = NoteStorage[element.id].title;
       noteinput.value = NoteStorage[element.id].note;
       characterCounter();
@@ -158,6 +159,7 @@ function editNote() {
   editStatus = 1;
   noteinput.disabled = false;
   noteTitle.disabled = false;
+  saveNotes.disabled = false;
 }
 
 function searchNotes() {
@@ -172,9 +174,9 @@ function searchNotes() {
   });
 }
 
-function CardHIghlight(){
-  if(cardID === null) return;
- document.getElementById(`${cardID}`).classList.remove("active") 
+function CardHIghlight() {
+  if (cardID === null) return;
+  document.getElementById(`${cardID}`).classList.remove("active");
 }
 
 const NoteStorage = [];
