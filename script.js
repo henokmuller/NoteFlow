@@ -201,6 +201,8 @@ const deleteNoteBtn = document.getElementById("delete-note-btn");
 const editNoteBtn = document.getElementById("edit-note-btn");
 const sortSelect = document.getElementById("sort-select");
 const searchInput = document.getElementById("search-input");
+const footerCreatedDate = document.getElementById("created-date");
+const footerEditedDate = document.getElementById("edited-date");
 
 changeTheme.addEventListener("click", newTheme);
 saveNotes.addEventListener("click", store);
