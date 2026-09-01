@@ -1,30 +1,54 @@
 class NOTE_FACTORY {
+  id;
   note;
   year;
   month;
   day;
   title;
-  constructor(note, year, month, day, title = "Untitled") {
+  createdAt;
+  constructor(
+    note,
+    year,
+    month,
+    day,
+    title = "Untitled",
+    id = null,
+    createdAt = Date.now()
+  ) {
+    this.id = id;
     this.note = note;
     this.day = day;
     this.title = title;
     this.month = month;
     this.year = year;
+    this.createdAt = createdAt;
   }
 }
 
-function store() {
+async function fetchData() {
+  const response = await fetch("http://localhost:3000/notes/");
+  const data = await response.json();
+  intialDataVis(data);
+}
+
+fetchData();
+
+async function store() {
   if (editStatus === 1) {
-    NoteStorage[cardID].note = noteinput.value;
-    NoteStorage[cardID].title = noteTitle.value || "untitled";
+    await editData(noteinput.value, noteTitle.value || "Untitled", cardID);
+    const currentNote = NoteStorage.find((num) => num.id === cardID);
+    currentNote.note = noteinput.value;
+    currentNote.title = noteTitle.value || "Untitled";
+
     document.querySelector(
       `#${CSS.escape(cardID)} .note-content h3`
     ).textContent = noteTitle.value || "Untitled";
     noteinput.disabled = false;
     noteTitle.disabled = false;
     clearSession();
-    CardHIghlight();
+    removeCardHIghlight();
     editStatus = null;
+
     return;
   }
 
@@ -35,10 +59,12 @@ function store() {
     Day,
     noteTitle.value || "Untitled"
   );
-  NoteStorage.push(user);
+
+  const response = await postData(user);
+  NoteStorage.push(response);
   makeCard();
   clearSession();
-  CardHIghlight();
+  removeCardHIghlight();
   enableCardSelection();
   noteCounter();
 }
@@ -57,16 +83,17 @@ function makeCard() {
 
   if (emptyState) emptyState.remove();
 
-  noteCard.classList.toggle("note-card");
-  noteContent.classList.toggle("note-content");
-  noteMeta.classList.toggle("note-meta");
+  noteCard.classList.add("note-card");
+  noteContent.classList.add("note-content");
+  noteMeta.classList.add("note-meta");
 
   notesList.appendChild(noteCard);
   noteCard.appendChild(noteContent);
   noteContent.appendChild(title);
   noteCard.appendChild(noteMeta);
   noteMeta.appendChild(dateCreated);
-  noteCard.id = `${NoteStorage.length - 1}`;
+
+  noteCard.id = `${NoteStorage[NoteStorage.length - 1].id}`;
 }
 
 function noteCounter() {
@@ -98,12 +125,12 @@ function enableCardSelection() {
   const enabledCards = document.querySelectorAll(".note-card");
   enabledCards.forEach((element) => {
     element.addEventListener("click", () => {
-      cardID = Number(element.id);
+      cardID = element.id;
+      const currentNote = NoteStorage.find((num) => num.id === cardID);
       noteinput.disabled = true;
       noteTitle.disabled = true;
-      saveNotes.disabled = true;
-      noteTitle.value = NoteStorage[element.id].title;
-      noteinput.value = NoteStorage[element.id].note;
+      noteTitle.value = currentNote.title;
+      noteinput.value = currentNote.note;
       characterCounter();
       setActiveCard(element);
     });
@@ -116,15 +143,13 @@ function clearSession() {
   characterCounter();
 }
 
-function deleteNote() {
+async function deleteNote() {
   if (cardID === null) return;
+  await deleteData(cardID);
   document.getElementById(`${cardID}`).remove();
   clearSession();
-  NoteStorage.splice(cardID, 1);
-
-  document.querySelectorAll(".note-card").forEach((element, index) => {
-    element.id = index;
-  });
+  const currentNote = NoteStorage.find((num) => num.id === cardID);
+  NoteStorage.splice(NoteStorage.indexOf(currentNote), 1);
 
   cardID = null;
   setActiveCard(null);
@@ -132,23 +157,14 @@ function deleteNote() {
 }
 
 function addNewNote() {
-  if (editStatus === 1) {
-    NoteStorage[cardID].note = noteinput.value;
-    NoteStorage[cardID].title = noteTitle.value || "untitled";
-    document.querySelector(
-      `#${CSS.escape(cardID)} .note-content h3`
-    ).textContent = noteTitle.value || "Untitled";
-    noteinput.disabled = false;
-    noteTitle.disabled = false;
-    clearSession();
-    editStatus = null;
-    setActiveCard(null);
-    return;
-  }
+  editStatus = null;
+  setActiveCard(null);
+  cardID = null;
+
   noteinput.disabled = false;
   noteTitle.disabled = false;
+
   clearSession();
-  setActiveCard(null);
 }
 
 function editNote() {
@@ -159,7 +175,19 @@ function editNote() {
   editStatus = 1;
   noteinput.disabled = false;
   noteTitle.disabled = false;
-  saveNotes.disabled = false;
+}
+
+async function editData(note, title, cardID) {
+  await fetch(`http://localhost:3000/notes/${cardID}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      note,
+      title,
+    }),
+  });
 }
 
 function searchNotes() {
@@ -174,9 +202,53 @@ function searchNotes() {
   });
 }
 
-function CardHIghlight() {
+function intialDataVis(data) {
+  const tempStore = [];
+  for (const item of data) {
+    const user = new NOTE_FACTORY(
+      item.note,
+      item.year,
+      item.month,
+      item.day,
+      item.title,
+      item.id,
+      item.createdAt
+    );
+    tempStore.push(user);
+  }
+  ininitialState(tempStore);
+}
+
+function ininitialState(tempStore) {
+  for (const item of tempStore) {
+    console.log(item);
+    NoteStorage.push(item);
+    makeCard();
+    enableCardSelection();
+    noteCounter();
+  }
+}
+
+function removeCardHIghlight() {
   if (cardID === null) return;
   document.getElementById(`${cardID}`).classList.remove("active");
+}
+
+async function postData(user) {
+  const response = await fetch("http://localhost:3000/notes", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(user),
+  });
+  return await response.json();
+}
+
+async function deleteData(cardID) {
+  await fetch(`http://localhost:3000/notes/${cardID}`, {
+    method: "DELETE",
+  });
 }
 
 const NoteStorage = [];
@@ -201,8 +273,6 @@ const deleteNoteBtn = document.getElementById("delete-note-btn");
 const editNoteBtn = document.getElementById("edit-note-btn");
 const sortSelect = document.getElementById("sort-select");
 const searchInput = document.getElementById("search-input");
-const footerCreatedDate = document.getElementById("created-date");
-const footerEditedDate = document.getElementById("edited-date");
 
 changeTheme.addEventListener("click", newTheme);
 saveNotes.addEventListener("click", store);
@@ -216,11 +286,17 @@ sortSelect.addEventListener("change", (optionval) => {
 
   if (optionval.target.value == "created-oldest") {
     cards.sort((a, b) => {
-      return Number(a.id) - Number(b.id);
+      const A = NoteStorage.find((num) => num.id == a.id);
+      const B = NoteStorage.find((num) => num.id == b.id);
+
+      return Number(A.createdAt) - Number(B.createdAt);
     });
   } else if (optionval.target.value == "created-newest") {
     cards.sort((a, b) => {
-      return Number(b.id) - Number(a.id);
+      const A = NoteStorage.find((num) => num.id == a.id);
+      const B = NoteStorage.find((num) => num.id == b.id);
+
+      return Number(B.createdAt) - Number(A.createdAt);
     });
   }
 
