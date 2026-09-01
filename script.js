@@ -37,7 +37,7 @@ async function store() {
   if (editStatus === 1) {
     await editData(noteinput.value, noteTitle.value || "Untitled", cardID);
     const currentNote = NoteStorage.find(
-      (num) => string(num.id) === string(cardID)
+      (num) => String(num.id) === String(cardID)
     );
     currentNote.note = noteinput.value;
     currentNote.title = noteTitle.value || "Untitled";
@@ -94,12 +94,12 @@ function makeCard() {
   noteCard.appendChild(noteMeta);
   noteMeta.appendChild(dateCreated);
 
-  noteCard.id = `${NoteStorage[NoteStorage.length - 1].id}`;
+  noteCard.id = NoteStorage[NoteStorage.length - 1].id;
 
   noteCard.addEventListener("click", () => {
     cardID = noteCard.id;
     const currentNote = NoteStorage.find(
-      (num) => string(num.id) === string(cardID)
+      (num) => String(num.id) === String(cardID)
     );
     noteinput.disabled = true;
     noteTitle.disabled = true;
@@ -147,7 +147,7 @@ async function deleteNote() {
   document.getElementById(`${cardID}`).remove();
   clearSession();
   const currentNote = NoteStorage.find(
-    (num) => string(num.id) === string(cardID)
+    (num) => String(num.id) === String(cardID)
   );
   NoteStorage.splice(NoteStorage.indexOf(currentNote), 1);
 
@@ -221,7 +221,6 @@ function intialDataVis(data) {
 
 function ininitialState(tempStore) {
   for (const item of tempStore) {
-    console.log(item);
     NoteStorage.push(item);
     makeCard();
   }
