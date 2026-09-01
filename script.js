@@ -36,7 +36,9 @@ fetchData();
 async function store() {
   if (editStatus === 1) {
     await editData(noteinput.value, noteTitle.value || "Untitled", cardID);
-    const currentNote = NoteStorage.find((num) => num.id === cardID);
+    const currentNote = NoteStorage.find(
+      (num) => string(num.id) === string(cardID)
+    );
     currentNote.note = noteinput.value;
     currentNote.title = noteTitle.value || "Untitled";
 
@@ -65,7 +67,6 @@ async function store() {
   makeCard();
   clearSession();
   removeCardHIghlight();
-  enableCardSelection();
   noteCounter();
 }
 
@@ -94,6 +95,19 @@ function makeCard() {
   noteMeta.appendChild(dateCreated);
 
   noteCard.id = `${NoteStorage[NoteStorage.length - 1].id}`;
+
+  noteCard.addEventListener("click", () => {
+    cardID = noteCard.id;
+    const currentNote = NoteStorage.find(
+      (num) => string(num.id) === string(cardID)
+    );
+    noteinput.disabled = true;
+    noteTitle.disabled = true;
+    noteTitle.value = currentNote.title;
+    noteinput.value = currentNote.note;
+    characterCounter();
+    setActiveCard(noteCard);
+  });
 }
 
 function noteCounter() {
@@ -121,22 +135,6 @@ function setActiveCard(activeElement) {
   if (activeElement) activeElement.classList.add("active");
 }
 
-function enableCardSelection() {
-  const enabledCards = document.querySelectorAll(".note-card");
-  enabledCards.forEach((element) => {
-    element.addEventListener("click", () => {
-      cardID = element.id;
-      const currentNote = NoteStorage.find((num) => num.id === cardID);
-      noteinput.disabled = true;
-      noteTitle.disabled = true;
-      noteTitle.value = currentNote.title;
-      noteinput.value = currentNote.note;
-      characterCounter();
-      setActiveCard(element);
-    });
-  });
-}
-
 function clearSession() {
   noteinput.value = "";
   noteTitle.value = "";
@@ -148,7 +146,9 @@ async function deleteNote() {
   await deleteData(cardID);
   document.getElementById(`${cardID}`).remove();
   clearSession();
-  const currentNote = NoteStorage.find((num) => num.id === cardID);
+  const currentNote = NoteStorage.find(
+    (num) => string(num.id) === string(cardID)
+  );
   NoteStorage.splice(NoteStorage.indexOf(currentNote), 1);
 
   cardID = null;
@@ -224,9 +224,8 @@ function ininitialState(tempStore) {
     console.log(item);
     NoteStorage.push(item);
     makeCard();
-    enableCardSelection();
-    noteCounter();
   }
+  noteCounter();
 }
 
 function removeCardHIghlight() {
@@ -252,7 +251,6 @@ async function deleteData(cardID) {
 }
 
 const NoteStorage = [];
-const wordCount = [];
 const today = new Date();
 const Year = today.getUTCFullYear();
 const Month = today.getUTCMonth() + 1;
@@ -289,14 +287,14 @@ sortSelect.addEventListener("change", (optionval) => {
       const A = NoteStorage.find((num) => num.id == a.id);
       const B = NoteStorage.find((num) => num.id == b.id);
 
-      return Number(A.createdAt) - Number(B.createdAt);
+      return A.createdAt - B.createdAt;
     });
   } else if (optionval.target.value == "created-newest") {
     cards.sort((a, b) => {
       const A = NoteStorage.find((num) => num.id == a.id);
       const B = NoteStorage.find((num) => num.id == b.id);
 
-      return Number(B.createdAt) - Number(A.createdAt);
+      return B.createdAt - A.createdAt;
     });
   }
 
