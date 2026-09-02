@@ -972,6 +972,129 @@ body:not(.dark-theme) .note-card.pinned {
   color: var(--text-secondary);
 }
 
+/* Drawer Nav Categories */
+.drawer-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.drawer-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--text-secondary);
+  font-family: var(--font-main);
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.drawer-nav-item:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.drawer-nav-item.active {
+  background-color: var(--bg-hover);
+  color: var(--accent-blue);
+  font-weight: 600;
+}
+
+.drawer-nav-item.active svg {
+  color: var(--accent-blue);
+}
+
+.drawer-nav-item span:first-of-type {
+  flex: 1;
+}
+
+.drawer-nav-item .nav-count {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Trash Header Button */
+.trash-header-btn {
+  color: var(--danger-color) !important;
+}
+
+.trash-header-btn:hover {
+  color: var(--danger-hover) !important;
+  background-color: rgba(248, 113, 113, 0.15);
+}
+
+/* Trash Notice Banner in Editor */
+.trash-notice-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  background-color: rgba(248, 113, 113, 0.08);
+  border: 1px solid rgba(248, 113, 113, 0.22);
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 13px;
+}
+
+.trash-notice-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fca5a5;
+  font-weight: 500;
+}
+
+.trash-notice-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-trash-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 4px;
+  font-family: var(--font-main);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.btn-restore {
+  background-color: var(--accent-blue);
+  color: #ffffff;
+}
+
+.btn-restore:hover {
+  background-color: var(--accent-blue-hover);
+}
+
+.btn-delete-permanent {
+  background-color: transparent;
+  color: var(--danger-color);
+  border-color: rgba(248, 113, 113, 0.3);
+}
+
+.btn-delete-permanent:hover {
+  background-color: rgba(248, 113, 113, 0.15);
+  color: var(--danger-hover);
+  border-color: var(--danger-hover);
+}
+
 .drawer-row {
   display: flex;
   align-items: center;
