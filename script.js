@@ -245,7 +245,6 @@ function initialDataVis(data) {
 
 function initialState(tempStore) {
   for (const item of tempStore) {
-    console.log(item);
     NoteStorage.push(item);
     makeCard();
   }
