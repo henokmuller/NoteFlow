@@ -7,6 +7,7 @@ const Day = today.getUTCDate();
 
 let cardID = null;
 let pinStatus = null;
+let currentTags = [];
 
 const notesList = document.getElementById("notes-list");
 const noteCount = document.getElementById("notes-count");
@@ -24,6 +25,8 @@ const searchInput = document.getElementById("search-input");
 const pinNoteBtn = document.getElementById("pin-note-btn");
 const createdDateEl = document.getElementById("created-date");
 const editedDateEl = document.getElementById("edited-date");
+const tagInput = document.getElementById("tag-input");
+const tagsContainer = document.getElementById("tags-container");
 
 function formatDate(day, month, year) {
   const d = String(day || 1).padStart(2, "0");
@@ -57,6 +60,107 @@ function applyStoredTheme() {
 }
 applyStoredTheme();
 
+function renderTags() {
+  try {
+    if (!tagsContainer || !tagInput) return;
+    const existingPills = tagsContainer.querySelectorAll(".tag-pill");
+    existingPills.forEach((p) => p.remove());
+
+    currentTags.forEach((tag, index) => {
+      const pill = document.createElement("span");
+      pill.className = "tag-pill";
+      pill.textContent = `#${tag}`;
+
+      const removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "tag-remove-btn";
+      removeBtn.setAttribute("aria-label", `Remove tag ${tag}`);
+      removeBtn.innerHTML = "&times;";
+
+      removeBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        removeTag(index);
+      });
+
+      pill.appendChild(removeBtn);
+      tagsContainer.insertBefore(pill, tagInput);
+    });
+  } catch (err) {
+    console.error("Error rendering tags:", err.message);
+  }
+}
+
+function addTag(rawTag) {
+  try {
+    if (!rawTag) return;
+    const clean = String(rawTag).trim().toLowerCase().replace(/^#+/, "").replace(/,+$/, "").trim();
+    if (!clean) return;
+    if (currentTags.includes(clean)) return;
+
+    currentTags.push(clean);
+    renderTags();
+
+    if (cardID !== null) {
+      const currentNote = NoteStorage.find(
+        (num) => String(num.id) === String(cardID)
+      );
+      if (currentNote) {
+        currentNote.tags = [...currentTags];
+        updateCardTagsDisplay(cardID, currentTags);
+        saveToLocalStorage();
+        updateTagData(cardID, currentTags);
+      }
+    }
+  } catch (err) {
+    console.error("Error adding tag:", err.message);
+  }
+}
+
+function removeTag(index) {
+  try {
+    if (index < 0 || index >= currentTags.length) return;
+    currentTags.splice(index, 1);
+    renderTags();
+
+    if (cardID !== null) {
+      const currentNote = NoteStorage.find(
+        (num) => String(num.id) === String(cardID)
+      );
+      if (currentNote) {
+        currentNote.tags = [...currentTags];
+        updateCardTagsDisplay(cardID, currentTags);
+        saveToLocalStorage();
+        updateTagData(cardID, currentTags);
+      }
+    }
+  } catch (err) {
+    console.error("Error removing tag:", err.message);
+  }
+}
+
+function updateCardTagsDisplay(id, tags) {
+  try {
+    const card = document.getElementById(String(id));
+    if (!card) return;
+    const noteMeta = card.querySelector(".note-meta");
+    if (!noteMeta) return;
+
+    let tagsSpan = noteMeta.querySelector(".note-tags");
+    if (Array.isArray(tags) && tags.length > 0) {
+      if (!tagsSpan) {
+        tagsSpan = document.createElement("span");
+        tagsSpan.className = "note-tags";
+        noteMeta.appendChild(tagsSpan);
+      }
+      tagsSpan.textContent = tags.map((t) => `#${t}`).join(" ");
+    } else if (tagsSpan) {
+      tagsSpan.remove();
+    }
+  } catch (err) {
+    console.error("Error updating card tags display:", err.message);
+  }
+}
+
 class NOTE_FACTORY {
   id;
   note;
@@ -66,6 +170,7 @@ class NOTE_FACTORY {
   title;
   createdAt;
   isPinned;
+  tags;
 
   constructor(
     note = "",
@@ -75,7 +180,8 @@ class NOTE_FACTORY {
     title = "Untitled",
     id = null,
     createdAt = Date.now(),
-    isPinned = false
+    isPinned = false,
+    tags = []
   ) {
     this.id = id !== null && id !== undefined ? String(id) : String(Date.now());
     this.note = typeof note === "string" ? note : "";
@@ -85,6 +191,7 @@ class NOTE_FACTORY {
     this.year = Number(year) || Year;
     this.createdAt = Number(createdAt) || Date.now();
     this.isPinned = Boolean(isPinned);
+    this.tags = Array.isArray(tags) ? tags.map((t) => String(t).trim().toLowerCase().replace(/^#+/, "")).filter(Boolean) : [];
   }
 }
 
@@ -107,14 +214,15 @@ async function fetchData() {
       initialDataVis(localData);
     } else {
       const defaultNote = new NOTE_FACTORY(
-        "Welcome to NoteFlow!\n\nClick any note to immediately edit it. Click Save in the toolbar to save your updates. Use the pin icon to keep important notes anchored at the top.",
+        "Welcome to NoteFlow!\n\nClick any note to immediately edit it. Add tags at the bottom to organize your notes. Use the pin icon to keep important notes anchored at the top.",
         Year,
         Month,
         Day,
         "Welcome to NoteFlow 📌",
         "1",
         Date.now(),
-        true
+        true,
+        ["getting-started", "features"]
       );
       initialDataVis([defaultNote]);
       saveToLocalStorage();
@@ -153,7 +261,7 @@ async function store() {
     const titleContent = noteTitle.value && noteTitle.value.trim() ? noteTitle.value.trim() : "Untitled";
 
     if (cardID !== null) {
-      await editData(noteinput.value, titleContent, cardID);
+      await editData(noteinput.value, titleContent, cardID, currentTags);
 
       const currentNote = NoteStorage.find(
         (num) => String(num.id) === String(cardID)
@@ -162,6 +270,7 @@ async function store() {
       if (currentNote) {
         currentNote.note = noteinput.value;
         currentNote.title = titleContent;
+        currentNote.tags = [...currentTags];
 
         const card = document.getElementById(String(cardID));
         if (card) {
@@ -169,6 +278,7 @@ async function store() {
           if (cardTitleEl) {
             cardTitleEl.textContent = titleContent;
           }
+          updateCardTagsDisplay(cardID, currentTags);
         }
       }
 
@@ -199,7 +309,8 @@ async function store() {
       titleContent,
       null,
       Date.now(),
-      Boolean(pinStatus)
+      Boolean(pinStatus),
+      [...currentTags]
     );
 
     const response = await postData(user);
@@ -299,6 +410,13 @@ function makeCard(noteObj = NoteStorage[NoteStorage.length - 1]) {
     noteCard.appendChild(noteMeta);
     noteMeta.appendChild(dateCreated);
 
+    if (Array.isArray(currentNoteObject.tags) && currentNoteObject.tags.length > 0) {
+      const noteTagsSpan = document.createElement("span");
+      noteTagsSpan.className = "note-tags";
+      noteTagsSpan.textContent = currentNoteObject.tags.map((t) => `#${t}`).join(" ");
+      noteMeta.appendChild(noteTagsSpan);
+    }
+
     notesList.appendChild(noteCard);
 
     noteCard.addEventListener("click", () => {
@@ -316,6 +434,9 @@ function makeCard(noteObj = NoteStorage[NoteStorage.length - 1]) {
 
         noteTitle.value = currentNote.title || "";
         noteinput.value = currentNote.note || "";
+
+        currentTags = Array.isArray(currentNote.tags) ? [...currentNote.tags] : [];
+        renderTags();
 
         characterCounter();
         setActiveCard(noteCard);
@@ -514,6 +635,11 @@ function clearSession() {
       noteTitle.value = "";
       noteTitle.disabled = false;
     }
+    if (tagInput) {
+      tagInput.value = "";
+    }
+    currentTags = [];
+    renderTags();
     if (createdDateEl) createdDateEl.textContent = "—";
     if (editedDateEl) editedDateEl.textContent = "—";
     characterCounter();
@@ -535,7 +661,7 @@ function removeCardHighlight() {
 async function deleteNote() {
   try {
     if (cardID === null) {
-      const hasDraft = (noteinput && noteinput.value.trim()) || (noteTitle && noteTitle.value.trim());
+      const hasDraft = (noteinput && noteinput.value.trim()) || (noteTitle && noteTitle.value.trim()) || currentTags.length > 0;
       if (hasDraft) {
         if (!confirm("Discard this draft?")) return;
         clearSession();
@@ -613,6 +739,7 @@ function searchNotes() {
   try {
     if (!searchInput) return;
     const query = searchInput.value.toLowerCase().trim();
+    const cleanTagQuery = query.replace(/^#+/, "");
     let matchCount = 0;
 
     const cards = document.querySelectorAll(".note-card");
@@ -622,8 +749,11 @@ function searchNotes() {
 
       const titleMatch = (note.title || "").toLowerCase().includes(query);
       const contentMatch = (note.note || "").toLowerCase().includes(query);
+      const tagMatch = Array.isArray(note.tags) && note.tags.some((tag) =>
+        tag.toLowerCase().includes(cleanTagQuery)
+      );
 
-      if (!query || titleMatch || contentMatch) {
+      if (!query || titleMatch || contentMatch || tagMatch) {
         element.style.display = "";
         matchCount++;
       } else {
@@ -674,7 +804,8 @@ function initialDataVis(data) {
         item.title,
         item.id,
         item.createdAt || Date.now(),
-        Boolean(item.isPinned ?? item.pinned ?? false)
+        Boolean(item.isPinned ?? item.pinned ?? false),
+        Array.isArray(item.tags) ? item.tags : []
       );
 
       tempStore.push(user);
@@ -711,7 +842,7 @@ function initialState(tempStore) {
   }
 }
 
-async function editData(note, title, cardID) {
+async function editData(note, title, cardID, tags = []) {
   try {
     const response = await fetch(`http://localhost:3000/notes/${cardID}`, {
       method: "PATCH",
@@ -721,6 +852,7 @@ async function editData(note, title, cardID) {
       body: JSON.stringify({
         note,
         title,
+        tags,
       }),
     });
     if (!response.ok) {
@@ -728,6 +860,25 @@ async function editData(note, title, cardID) {
     }
   } catch (err) {
     console.warn("Server unavailable for edit:", err.message);
+  }
+}
+
+async function updateTagData(cardID, tags) {
+  try {
+    const response = await fetch(`http://localhost:3000/notes/${cardID}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        tags,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+  } catch (err) {
+    console.warn("Server unavailable for tag update:", err.message);
   }
 }
 
@@ -824,6 +975,33 @@ if (pinNoteBtn) {
       }
     } catch (err) {
       console.error("Error handling pin toolbar button click:", err.message);
+    }
+  });
+}
+
+if (tagInput) {
+  tagInput.addEventListener("keydown", (e) => {
+    try {
+      if (e.key === "Enter" || e.key === ",") {
+        e.preventDefault();
+        addTag(tagInput.value);
+        tagInput.value = "";
+      } else if (e.key === "Backspace" && tagInput.value === "" && currentTags.length > 0) {
+        removeTag(currentTags.length - 1);
+      }
+    } catch (err) {
+      console.error("Error handling tag input keydown:", err.message);
+    }
+  });
+
+  tagInput.addEventListener("blur", () => {
+    try {
+      if (tagInput.value.trim()) {
+        addTag(tagInput.value);
+        tagInput.value = "";
+      }
+    } catch (err) {
+      console.error("Error handling tag input blur:", err.message);
     }
   });
 }
