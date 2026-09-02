@@ -8,7 +8,7 @@ A focused, distraction-free note-taking web application inspired by Simplenote. 
 
 - 📌 **Pin Notes to Top**: Click the pushpin icon directly on any note card or in the editor toolbar to anchor priority notes to the top of your list. Pinned notes remain elevated above all unpinned notes regardless of sort order.
 - 🏷️ **Interactive Note Tags**: Add custom tags in the bottom bar by typing and pressing `Enter` or `,`. Tag pills include instant removal buttons, auto-sync, and appear directly on note cards in the sidebar.
-- 🗑️ **Trash Category & Note Recovery**: Deleted notes are safely moved to the Trash view in settings. Restore notes back to your active list or permanently empty the trash at any time.
+- 🗑️ **Trash Category & 30-Day Auto-Purge**: Deleted notes are safely stored in the Trash category inside settings for 30 days before being permanently deleted. View remaining countdowns on each trash card, restore notes back to your active list at any time, or empty trash permanently.
 - ✍️ **Distraction-Free Editor**: Seamless, borderless title and body canvas designed for effortless writing.
 - 🔍 **Live Search across Titles, Content & Tags**: Real-time searching across note titles, body text, and tags (with or without `#`). Features a live match counter (e.g., `2 found`) and empty state feedback.
 - 🗂️ **Smart Sorting**: Instantly order notes by *Created: Newest* or *Created: Oldest*, preserving pinned items at the top.
@@ -70,7 +70,7 @@ If you wish to synchronize notes through a local REST API:
 | **Delete Note** | Select a note and click the **Trash** button in the toolbar. The editor automatically clears and unlocks for immediate writing. |
 | **Search Notes & Tags** | Type any keyword or tag name (e.g. `work` or `#work`) in the search bar above the notes list. |
 | **Add / Remove Tags** | In the bottom bar of the editor, type a tag name and hit `Enter` or `,`. Click the `×` on any tag pill to delete it. |
-| **Trash & Recovery** | Open the menu drawer and tap **Trash** to browse deleted notes. Click **Restore** to recover a note or **Empty Trash** to clear permanently. |
+| **Trash & 30-Day Expiry** | Open the menu drawer and tap **Trash** to browse deleted notes (automatically purged after 30 days). Click **Restore** to recover a note or **Empty Trash** to clear immediately. |
 | **Sort Notes** | Open the menu drawer (hamburger icon) and select *Created: Newest* or *Created: Oldest*. |
 | **Toggle Theme** | Open the menu drawer and click the theme toggle button. Your mode is saved automatically. |
 | **View Note Details** | Click the **(i)** icon in the top toolbar to view character length, creation timestamp, and details. |

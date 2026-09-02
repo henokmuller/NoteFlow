@@ -1,5 +1,6 @@
 const NoteStorage = [];
 const TrashStorage = [];
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 
 const today = new Date();
 const Year = today.getUTCFullYear();
@@ -47,6 +48,44 @@ function formatDate(day, month, year) {
   const m = String(month || 1).padStart(2, "0");
   const y = String(year || Year);
   return `${d}-${m}-${y}`;
+}
+
+function getDaysRemainingInTrash(deletedAt) {
+  const elapsed = Date.now() - (Number(deletedAt) || Date.now());
+  const remainingMs = THIRTY_DAYS_MS - elapsed;
+  const remainingDays = Math.ceil(remainingMs / (24 * 60 * 60 * 1000));
+  if (remainingDays <= 0) return "Expires today";
+  if (remainingDays === 1) return "1 day left";
+  return `${remainingDays} days left`;
+}
+
+function cleanupExpiredTrash() {
+  try {
+    const now = Date.now();
+    const unexpired = [];
+    const expiredIds = [];
+
+    for (const item of TrashStorage) {
+      const deletedTime = Number(item.deletedAt) || now;
+      if (now - deletedTime >= THIRTY_DAYS_MS) {
+        expiredIds.push(item.id);
+      } else {
+        unexpired.push(item);
+      }
+    }
+
+    if (expiredIds.length > 0) {
+      for (const id of expiredIds) {
+        deleteData(id);
+      }
+      TrashStorage.length = 0;
+      TrashStorage.push(...unexpired);
+      saveTrashToLocalStorage();
+      noteCounter();
+    }
+  } catch (err) {
+    console.error("Error cleaning up expired trash:", err.message);
+  }
 }
 
 function applyStoredTheme() {
@@ -238,6 +277,7 @@ async function fetchData() {
     if (Array.isArray(localTrash)) {
       TrashStorage.push(...localTrash);
     }
+    cleanupExpiredTrash();
 
     const response = await fetch("http://localhost:3000/notes/");
     if (!response.ok) {
@@ -530,6 +570,11 @@ function makeTrashCard(trashObj) {
     noteCard.appendChild(noteMeta);
     noteMeta.appendChild(dateCreated);
 
+    const expiryBadge = document.createElement("span");
+    expiryBadge.className = "trash-expiry";
+    expiryBadge.textContent = getDaysRemainingInTrash(trashObj.deletedAt);
+    noteMeta.appendChild(expiryBadge);
+
     if (Array.isArray(trashObj.tags) && trashObj.tags.length > 0) {
       const noteTagsSpan = document.createElement("span");
       noteTagsSpan.className = "note-tags";
@@ -560,6 +605,10 @@ function makeTrashCard(trashObj) {
 
         if (trashNoticeBanner) {
           trashNoticeBanner.style.display = "flex";
+          const descSpan = document.getElementById("trash-notice-desc");
+          if (descSpan) {
+            descSpan.textContent = `This note is in the Trash (${getDaysRemainingInTrash(trashObj.deletedAt)}).`;
+          }
         }
 
         if (createdDateEl) {
@@ -980,6 +1029,7 @@ function switchView(view) {
       if (deleteNoteBtn) deleteNoteBtn.style.display = "none";
       if (pinNoteBtn) pinNoteBtn.style.display = "none";
 
+      cleanupExpiredTrash();
       renderTrashList();
     } else {
       if (viewAllNotesBtn) viewAllNotesBtn.classList.add("active");
