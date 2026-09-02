@@ -826,13 +826,8 @@ async function deleteNote() {
     if (cardID === null) {
       const hasDraft = (noteinput && noteinput.value.trim()) || (noteTitle && noteTitle.value.trim()) || currentTags.length > 0;
       if (hasDraft) {
-        if (!confirm("Discard this draft?")) return;
         clearSession();
       }
-      return;
-    }
-
-    if (!confirm("Move this note to the Trash?")) {
       return;
     }
 
