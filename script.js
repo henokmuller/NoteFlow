@@ -1,4 +1,5 @@
 const NoteStorage = [];
+const TrashStorage = [];
 
 const today = new Date();
 const Year = today.getUTCFullYear();
@@ -8,6 +9,7 @@ const Day = today.getUTCDate();
 let cardID = null;
 let pinStatus = null;
 let currentTags = [];
+let currentView = "notes";
 
 const notesList = document.getElementById("notes-list");
 const noteCount = document.getElementById("notes-count");
@@ -27,6 +29,18 @@ const createdDateEl = document.getElementById("created-date");
 const editedDateEl = document.getElementById("edited-date");
 const tagInput = document.getElementById("tag-input");
 const tagsContainer = document.getElementById("tags-container");
+
+const viewAllNotesBtn = document.getElementById("view-all-notes-btn");
+const viewTrashBtn = document.getElementById("view-trash-btn");
+const allNotesCountEl = document.getElementById("all-notes-count");
+const trashNotesCountEl = document.getElementById("trash-notes-count");
+const sidebarViewTitle = document.getElementById("sidebar-view-title");
+const emptyTrashBtn = document.getElementById("empty-trash-btn");
+const trashNoticeBanner = document.getElementById("trash-notice-banner");
+const restoreNoteBtn = document.getElementById("restore-note-btn");
+const deletePermanentBtn = document.getElementById("delete-permanent-btn");
+const drawer = document.getElementById("menu-drawer");
+const overlay = document.getElementById("menu-overlay");
 
 function formatDate(day, month, year) {
   const d = String(day || 1).padStart(2, "0");
@@ -71,18 +85,21 @@ function renderTags() {
       pill.className = "tag-pill";
       pill.textContent = `#${tag}`;
 
-      const removeBtn = document.createElement("button");
-      removeBtn.type = "button";
-      removeBtn.className = "tag-remove-btn";
-      removeBtn.setAttribute("aria-label", `Remove tag ${tag}`);
-      removeBtn.innerHTML = "&times;";
+      if (currentView !== "trash") {
+        const removeBtn = document.createElement("button");
+        removeBtn.type = "button";
+        removeBtn.className = "tag-remove-btn";
+        removeBtn.setAttribute("aria-label", `Remove tag ${tag}`);
+        removeBtn.innerHTML = "&times;";
 
-      removeBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        removeTag(index);
-      });
+        removeBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          removeTag(index);
+        });
 
-      pill.appendChild(removeBtn);
+        pill.appendChild(removeBtn);
+      }
+
       tagsContainer.insertBefore(pill, tagInput);
     });
   } catch (err) {
@@ -92,6 +109,7 @@ function renderTags() {
 
 function addTag(rawTag) {
   try {
+    if (currentView === "trash") return;
     if (!rawTag) return;
     const clean = String(rawTag).trim().toLowerCase().replace(/^#+/, "").replace(/,+$/, "").trim();
     if (!clean) return;
@@ -118,6 +136,7 @@ function addTag(rawTag) {
 
 function removeTag(index) {
   try {
+    if (currentView === "trash") return;
     if (index < 0 || index >= currentTags.length) return;
     currentTags.splice(index, 1);
     renderTags();
@@ -195,8 +214,31 @@ class NOTE_FACTORY {
   }
 }
 
+function noteCounter() {
+  try {
+    if (allNotesCountEl) {
+      allNotesCountEl.textContent = String(NoteStorage.length);
+    }
+    if (trashNotesCountEl) {
+      trashNotesCountEl.textContent = String(TrashStorage.length);
+    }
+    if (noteCount) {
+      const count = currentView === "trash" ? TrashStorage.length : NoteStorage.length;
+      noteCount.textContent = `${count} ${count === 1 ? "note" : "notes"}`;
+    }
+  } catch (err) {
+    console.error("Error updating note counter:", err.message);
+  }
+}
+
 async function fetchData() {
   try {
+    const localTrash = loadTrashFromLocalStorage();
+    TrashStorage.length = 0;
+    if (Array.isArray(localTrash)) {
+      TrashStorage.push(...localTrash);
+    }
+
     const response = await fetch("http://localhost:3000/notes/");
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -255,6 +297,7 @@ getQuotes();
 
 async function store() {
   try {
+    if (currentView === "trash") return;
     if (!noteinput || !noteTitle) return;
 
     const noteContent = noteinput.value ? noteinput.value.trim() : "";
@@ -443,6 +486,8 @@ function makeCard(noteObj = NoteStorage[NoteStorage.length - 1]) {
         setActiveCard(noteCard);
         updateToolbarPinState();
 
+        if (trashNoticeBanner) trashNoticeBanner.style.display = "none";
+
         if (createdDateEl) {
           createdDateEl.textContent = formattedDate;
         }
@@ -455,8 +500,83 @@ function makeCard(noteObj = NoteStorage[NoteStorage.length - 1]) {
   }
 }
 
+function makeTrashCard(trashObj) {
+  try {
+    if (!trashObj || !notesList) return;
+
+    const noteCard = document.createElement("article");
+    const noteContent = document.createElement("div");
+    const title = document.createElement("h3");
+    const noteMeta = document.createElement("div");
+    const dateCreated = document.createElement("span");
+    dateCreated.className = "note-date";
+    const emptyState = document.getElementById("empty-state");
+
+    const formattedDate = formatDate(trashObj.day, trashObj.month, trashObj.year);
+
+    dateCreated.textContent = formattedDate;
+    title.textContent = trashObj.title || "Untitled";
+
+    if (emptyState) emptyState.remove();
+
+    noteCard.classList.add("note-card");
+    noteCard.id = String(trashObj.id);
+
+    noteContent.classList.add("note-content");
+    noteMeta.classList.add("note-meta");
+
+    noteCard.appendChild(noteContent);
+    noteContent.appendChild(title);
+    noteCard.appendChild(noteMeta);
+    noteMeta.appendChild(dateCreated);
+
+    if (Array.isArray(trashObj.tags) && trashObj.tags.length > 0) {
+      const noteTagsSpan = document.createElement("span");
+      noteTagsSpan.className = "note-tags";
+      noteTagsSpan.textContent = trashObj.tags.map((t) => `#${t}`).join(" ");
+      noteMeta.appendChild(noteTagsSpan);
+    }
+
+    notesList.appendChild(noteCard);
+
+    noteCard.addEventListener("click", () => {
+      try {
+        cardID = trashObj.id;
+
+        if (noteinput) {
+          noteinput.value = trashObj.note || "";
+          noteinput.disabled = true;
+        }
+        if (noteTitle) {
+          noteTitle.value = trashObj.title || "";
+          noteTitle.disabled = true;
+        }
+
+        currentTags = Array.isArray(trashObj.tags) ? [...trashObj.tags] : [];
+        renderTags();
+
+        characterCounter();
+        setActiveCard(noteCard);
+
+        if (trashNoticeBanner) {
+          trashNoticeBanner.style.display = "flex";
+        }
+
+        if (createdDateEl) {
+          createdDateEl.textContent = formattedDate;
+        }
+      } catch (err) {
+        console.error("Error activating trash note card:", err.message);
+      }
+    });
+  } catch (err) {
+    console.error("Error creating trash card:", err.message);
+  }
+}
+
 async function togglePinNote(id) {
   try {
+    if (currentView === "trash") return;
     if (id === null || id === undefined) return;
 
     const currentNote = NoteStorage.find(
@@ -541,7 +661,7 @@ function updateToolbarPinState() {
   try {
     if (!pinNoteBtn) return;
 
-    if (cardID === null) {
+    if (currentView === "trash" || cardID === null) {
       pinNoteBtn.classList.toggle("pinned", Boolean(pinStatus));
       pinNoteBtn.classList.toggle("active", Boolean(pinStatus));
       pinNoteBtn.setAttribute(
@@ -566,16 +686,6 @@ function updateToolbarPinState() {
     pinNoteBtn.setAttribute("aria-label", isPinned ? "Unpin note" : "Pin note to top");
   } catch (err) {
     console.error("Error updating toolbar pin state:", err.message);
-  }
-}
-
-function noteCounter() {
-  try {
-    if (noteCount) {
-      noteCount.textContent = `${NoteStorage.length} ${NoteStorage.length === 1 ? "note" : "notes"}`;
-    }
-  } catch (err) {
-    console.error("Error updating note counter:", err.message);
   }
 }
 
@@ -630,17 +740,18 @@ function clearSession() {
   try {
     if (noteinput) {
       noteinput.value = "";
-      noteinput.disabled = false;
+      noteinput.disabled = currentView === "trash";
     }
     if (noteTitle) {
       noteTitle.value = "";
-      noteTitle.disabled = false;
+      noteTitle.disabled = currentView === "trash";
     }
     if (tagInput) {
       tagInput.value = "";
     }
     currentTags = [];
     renderTags();
+    if (trashNoticeBanner) trashNoticeBanner.style.display = "none";
     if (createdDateEl) createdDateEl.textContent = "—";
     if (editedDateEl) editedDateEl.textContent = "—";
     characterCounter();
@@ -661,6 +772,8 @@ function removeCardHighlight() {
 
 async function deleteNote() {
   try {
+    if (currentView === "trash") return;
+
     if (cardID === null) {
       const hasDraft = (noteinput && noteinput.value.trim()) || (noteTitle && noteTitle.value.trim()) || currentTags.length > 0;
       if (hasDraft) {
@@ -670,27 +783,28 @@ async function deleteNote() {
       return;
     }
 
-    if (!confirm("Are you sure you want to delete this note?")) {
+    if (!confirm("Move this note to the Trash?")) {
       return;
     }
 
     const idToDelete = cardID;
-    await deleteData(idToDelete);
-
     const currentNoteIndex = NoteStorage.findIndex(
       (num) => String(num.id) === String(idToDelete)
     );
 
     if (currentNoteIndex !== -1) {
-      NoteStorage.splice(currentNoteIndex, 1);
+      const deletedNote = NoteStorage.splice(currentNoteIndex, 1)[0];
+      deletedNote.deletedAt = Date.now();
+      TrashStorage.unshift(deletedNote);
+      saveTrashToLocalStorage();
     }
+
+    await deleteData(idToDelete);
 
     const el = document.getElementById(String(idToDelete));
     if (el) el.remove();
 
     clearSession();
-    if (noteinput) noteinput.disabled = false;
-    if (noteTitle) noteTitle.disabled = false;
     cardID = null;
     pinStatus = null;
     setActiveCard(null);
@@ -699,28 +813,42 @@ async function deleteNote() {
     saveToLocalStorage();
 
     if (NoteStorage.length === 0 && notesList) {
-      if (!document.getElementById("empty-state")) {
-        const empty = document.createElement("div");
-        empty.className = "empty-state";
-        empty.id = "empty-state";
-        empty.innerHTML = `
-          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-            <polyline points="14 2 14 8 20 8"></polyline>
-          </svg>
-          <h3>No notes yet</h3>
-          <p>Click the compose button to create your first note.</p>
-        `;
-        notesList.appendChild(empty);
-      }
+      renderEmptyState("No notes yet", "Click the compose button to create your first note.");
     }
   } catch (err) {
     console.error("Error deleting note:", err.message);
   }
 }
 
+function renderEmptyState(heading, message) {
+  try {
+    if (!notesList) return;
+    const existing = document.getElementById("empty-state");
+    if (existing) existing.remove();
+
+    const empty = document.createElement("div");
+    empty.className = "empty-state";
+    empty.id = "empty-state";
+    empty.innerHTML = `
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+      </svg>
+      <h3>${heading}</h3>
+      <p>${message}</p>
+    `;
+    notesList.appendChild(empty);
+  } catch (err) {
+    console.error("Error rendering empty state:", err.message);
+  }
+}
+
 function addNewNote() {
   try {
+    if (currentView === "trash") {
+      switchView("notes");
+    }
+
     setActiveCard(null);
     cardID = null;
     pinStatus = null;
@@ -743,9 +871,11 @@ function searchNotes() {
     const cleanTagQuery = query.replace(/^#+/, "");
     let matchCount = 0;
 
+    const source = currentView === "trash" ? TrashStorage : NoteStorage;
     const cards = document.querySelectorAll(".note-card");
+
     cards.forEach((element) => {
-      const note = NoteStorage.find((n) => String(n.id) === String(element.id));
+      const note = source.find((n) => String(n.id) === String(element.id));
       if (!note) return;
 
       const titleMatch = (note.title || "").toLowerCase().includes(query);
@@ -763,7 +893,7 @@ function searchNotes() {
     });
 
     const searchEmpty = document.getElementById("search-empty-state");
-    if (query && matchCount === 0 && NoteStorage.length > 0) {
+    if (query && matchCount === 0 && source.length > 0) {
       if (!searchEmpty && notesList) {
         const msg = document.createElement("div");
         msg.id = "search-empty-state";
@@ -787,6 +917,151 @@ function searchNotes() {
     }
   } catch (err) {
     console.error("Error searching notes:", err.message);
+  }
+}
+
+function renderNotesList() {
+  try {
+    if (!notesList) return;
+    notesList.querySelectorAll(".note-card, .empty-state, #search-empty-state").forEach((c) => c.remove());
+
+    if (NoteStorage.length === 0) {
+      renderEmptyState("No notes yet", "Click the compose button to create your first note.");
+    } else {
+      for (const item of NoteStorage) {
+        makeCard(item);
+      }
+      reorderCards();
+      const first = notesList.querySelector(".note-card");
+      if (first) first.click();
+    }
+  } catch (err) {
+    console.error("Error rendering notes list:", err.message);
+  }
+}
+
+function renderTrashList() {
+  try {
+    if (!notesList) return;
+    notesList.querySelectorAll(".note-card, .empty-state, #search-empty-state").forEach((c) => c.remove());
+
+    if (TrashStorage.length === 0) {
+      renderEmptyState("Trash is empty", "Deleted notes will appear here.");
+    } else {
+      for (const item of TrashStorage) {
+        makeTrashCard(item);
+      }
+      const first = notesList.querySelector(".note-card");
+      if (first) first.click();
+    }
+  } catch (err) {
+    console.error("Error rendering trash list:", err.message);
+  }
+}
+
+function switchView(view) {
+  try {
+    currentView = view;
+    cardID = null;
+    clearSession();
+    setActiveCard(null);
+
+    if (drawer) drawer.classList.remove("open");
+    if (overlay) overlay.classList.remove("open");
+    if (searchInput) searchInput.value = "";
+
+    if (currentView === "trash") {
+      if (viewTrashBtn) viewTrashBtn.classList.add("active");
+      if (viewAllNotesBtn) viewAllNotesBtn.classList.remove("active");
+      if (sidebarViewTitle) sidebarViewTitle.textContent = "Trash";
+      if (newNoteBtn) newNoteBtn.style.display = "none";
+      if (emptyTrashBtn) emptyTrashBtn.style.display = "flex";
+      if (saveNotes) saveNotes.style.display = "none";
+      if (deleteNoteBtn) deleteNoteBtn.style.display = "none";
+      if (pinNoteBtn) pinNoteBtn.style.display = "none";
+
+      renderTrashList();
+    } else {
+      if (viewAllNotesBtn) viewAllNotesBtn.classList.add("active");
+      if (viewTrashBtn) viewTrashBtn.classList.remove("active");
+      if (sidebarViewTitle) sidebarViewTitle.textContent = "All Notes";
+      if (newNoteBtn) newNoteBtn.style.display = "flex";
+      if (emptyTrashBtn) emptyTrashBtn.style.display = "none";
+      if (saveNotes) saveNotes.style.display = "inline-flex";
+      if (deleteNoteBtn) deleteNoteBtn.style.display = "inline-flex";
+      if (pinNoteBtn) pinNoteBtn.style.display = "inline-flex";
+
+      renderNotesList();
+    }
+
+    noteCounter();
+  } catch (err) {
+    console.error("Error switching view:", err.message);
+  }
+}
+
+async function restoreActiveTrashNote() {
+  try {
+    if (cardID === null) return;
+    const index = TrashStorage.findIndex((num) => String(num.id) === String(cardID));
+    if (index === -1) return;
+
+    const restoredNote = TrashStorage.splice(index, 1)[0];
+    delete restoredNote.deletedAt;
+
+    NoteStorage.push(restoredNote);
+    saveTrashToLocalStorage();
+    saveToLocalStorage();
+    await postData(restoredNote);
+
+    cardID = null;
+    clearSession();
+    renderTrashList();
+    noteCounter();
+  } catch (err) {
+    console.error("Error restoring trash note:", err.message);
+  }
+}
+
+async function deletePermanentActiveTrashNote() {
+  try {
+    if (cardID === null) return;
+    if (!confirm("Permanently delete this note? This action cannot be undone.")) return;
+
+    const index = TrashStorage.findIndex((num) => String(num.id) === String(cardID));
+    if (index === -1) return;
+
+    TrashStorage.splice(index, 1);
+    saveTrashToLocalStorage();
+    await deleteData(cardID);
+
+    cardID = null;
+    clearSession();
+    renderTrashList();
+    noteCounter();
+  } catch (err) {
+    console.error("Error permanently deleting trash note:", err.message);
+  }
+}
+
+async function emptyTrash() {
+  try {
+    if (TrashStorage.length === 0) return;
+    if (!confirm("Are you sure you want to permanently delete all notes in the Trash?")) return;
+
+    for (const item of TrashStorage) {
+      await deleteData(item.id);
+    }
+
+    TrashStorage.length = 0;
+    saveTrashToLocalStorage();
+
+    cardID = null;
+    clearSession();
+    renderTrashList();
+    noteCounter();
+  } catch (err) {
+    console.error("Error emptying trash:", err.message);
   }
 }
 
@@ -957,6 +1232,29 @@ function loadFromLocalStorage() {
   return null;
 }
 
+function saveTrashToLocalStorage() {
+  try {
+    localStorage.setItem("noteflow_trash", JSON.stringify(TrashStorage));
+  } catch (err) {
+    console.warn("Trash storage write failed:", err.message);
+  }
+}
+
+function loadTrashFromLocalStorage() {
+  try {
+    const saved = localStorage.getItem("noteflow_trash");
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) {
+        return parsed;
+      }
+    }
+  } catch (err) {
+    console.warn("Trash storage read failed:", err.message);
+  }
+  return [];
+}
+
 if (changeTheme) changeTheme.addEventListener("click", newTheme);
 if (saveNotes) saveNotes.addEventListener("click", store);
 if (noteinput) noteinput.addEventListener("input", characterCounter);
@@ -964,6 +1262,12 @@ if (deleteNoteBtn) deleteNoteBtn.addEventListener("click", deleteNote);
 if (newNoteBtn) newNoteBtn.addEventListener("click", addNewNote);
 if (searchInput) searchInput.addEventListener("input", searchNotes);
 if (sortSelect) sortSelect.addEventListener("change", reorderCards);
+
+if (viewAllNotesBtn) viewAllNotesBtn.addEventListener("click", () => switchView("notes"));
+if (viewTrashBtn) viewTrashBtn.addEventListener("click", () => switchView("trash"));
+if (emptyTrashBtn) emptyTrashBtn.addEventListener("click", emptyTrash);
+if (restoreNoteBtn) restoreNoteBtn.addEventListener("click", restoreActiveTrashNote);
+if (deletePermanentBtn) deletePermanentBtn.addEventListener("click", deletePermanentActiveTrashNote);
 
 if (pinNoteBtn) {
   pinNoteBtn.addEventListener("click", () => {
