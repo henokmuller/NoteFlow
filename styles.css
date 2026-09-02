@@ -1,7 +1,10 @@
-/* =========================
-   RESET
-========================= */
+/* ==========================================================================
+   SIMPLENOTE DARK THEME & LAYOUT — NoteFlow
+   ========================================================================== */
 
+/* =========================
+   RESET & GLOBAL VARIABLES
+   ========================= */
 *,
 *::before,
 *::after {
@@ -10,977 +13,1020 @@
   box-sizing: border-box;
 }
 
-/* =========================
-   THEME VARIABLES — Ink & Paper
-========================= */
-
 :root {
-  --background: #f6f4f0;
-  --surface: #ffffff;
-  --surface-secondary: #ede9e3;
+  /* Simplenote Dark Color Palette */
+  --bg-sidebar: #15181f;
+  --bg-sidebar-top: #181c25;
+  --bg-editor: #1a1d24;
+  --bg-toolbar: #1a1d24;
+  --bg-popover: #20242e;
+  --bg-hover: rgba(255, 255, 255, 0.04);
+  --bg-active-card: #2b3e64; /* Iconic Simplenote active note blue */
+  --bg-pill: #252a36;
+  --bg-input: #15181f;
+  
+  --border-color: #232732;
+  --border-subtle: #2b303e;
 
-  --text: #2c2a28;
-  --text-secondary: #7a7570;
-  --text-muted: #b0aaa2;
+  --text-primary: #e6e9ef;
+  --text-editor: #d4d8e3;
+  --text-secondary: #7e889b;
+  --text-muted: #555d70;
+  --text-active-snippet: #9bb0d1;
+  --text-active-title: #ffffff;
+  
+  --icon-color: #8f9baa;
+  --icon-hover: #ffffff;
+  --icon-active: #58a6ff;
 
-  --border: #ddd8d0;
-  --border-input: #cbc5bb;
+  --accent-blue: #3b82f6;
+  --accent-blue-hover: #2563eb;
+  --danger-color: #f87171;
+  --danger-hover: #ef4444;
 
-  --primary: #2d6a4f;
-  --primary-hover: #1b4332;
-  --primary-ghost: rgba(45, 106, 79, 0.08);
-  --primary-ring: rgba(45, 106, 79, 0.18);
-
-  --danger: #c1292e;
-  --danger-ghost: rgba(193, 41, 46, 0.07);
-
-  --quote-background: #1b1b1f;
-  --quote-text: #f6f4f0;
-  --quote-muted: #918d86;
-
-  --shadow-sm: 0 1px 3px rgba(44, 42, 40, 0.04);
-  --shadow-md: 0 4px 16px rgba(44, 42, 40, 0.06);
-
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 14px;
-
-  --font-display: "Instrument Serif", Georgia, serif;
-  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+  --font-main: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: ui-monospace, "Cascadia Code", "Fira Code", monospace;
+  --font-serif: Georgia, Cambria, "Times New Roman", Times, serif;
+
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
 }
 
-/* =========================
-   DARK THEME
-========================= */
+/* Light Theme Alternative if user toggles */
+body:not(.dark-theme) {
+  --bg-sidebar: #f8f9fa;
+  --bg-sidebar-top: #f1f3f5;
+  --bg-editor: #ffffff;
+  --bg-toolbar: #ffffff;
+  --bg-popover: #ffffff;
+  --bg-hover: rgba(0, 0, 0, 0.04);
+  --bg-active-card: #e2ecf9;
+  --bg-pill: #e9ecef;
+  --bg-input: #f1f3f5;
 
-body.dark-theme {
-  --background: #161821;
-  --surface: #1e2030;
-  --surface-secondary: #282a3a;
+  --border-color: #e5e7eb;
+  --border-subtle: #d1d5db;
 
-  --text: #e8e6e1;
-  --text-secondary: #a09b94;
-  --text-muted: #6b665f;
+  --text-primary: #1f2937;
+  --text-editor: #2d3748;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --text-active-snippet: #3b82f6;
+  --text-active-title: #1e3a8a;
 
-  --border: #333546;
-  --border-input: #3e4052;
-
-  --primary: #52b788;
-  --primary-hover: #74c69d;
-  --primary-ghost: rgba(82, 183, 136, 0.1);
-  --primary-ring: rgba(82, 183, 136, 0.22);
-
-  --danger: #f28482;
-  --danger-ghost: rgba(242, 132, 130, 0.1);
-
-  --quote-background: #0d0e14;
-  --quote-text: #e8e6e1;
-  --quote-muted: #6b665f;
-
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.15);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.2);
+  --icon-color: #64748b;
+  --icon-hover: #1f2937;
+  --icon-active: #2563eb;
 }
 
-/* =========================
-   BODY
-========================= */
-
+html,
 body {
-  font-family: var(--font-body);
-  background: var(--background);
-  color: var(--text);
-  line-height: 1.6;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font-main);
+  background-color: var(--bg-sidebar);
+  color: var(--text-primary);
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* =========================
-   FOCUS VISIBLE — Accessibility
-========================= */
-
-:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
-}
-
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible {
-  outline: none;
+   SIMPLENOTE APP WRAPPER
+   ========================= */
+.simplenote-app {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
 }
 
 /* =========================
-   REDUCED MOTION
-========================= */
+   COMMON BUTTONS & ICONS
+   ========================= */
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--icon-color);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 6px;
+  transition: color var(--transition-fast), background-color var(--transition-fast), transform 0.1s;
+}
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
+.icon-btn:hover {
+  color: var(--icon-hover);
+  background-color: var(--bg-hover);
+}
+
+.icon-btn:active {
+  transform: scale(0.95);
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-pill);
+  color: var(--text-primary);
+  font-family: var(--font-main);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), transform 0.1s;
+}
+
+.action-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--icon-color);
+  color: #fff;
+}
+
+.action-btn:active {
+  transform: scale(0.97);
+}
+
+.save-btn {
+  background: #1e3a8a;
+  border-color: #2563eb;
+  color: #eff6ff;
+}
+
+.save-btn:hover {
+  background: #2563eb;
+  border-color: #3b82f6;
+  color: #ffffff;
+}
+
+.delete-btn {
+  color: var(--danger-color);
+}
+
+.delete-btn:hover {
+  color: var(--danger-hover);
+  background-color: rgba(248, 113, 113, 0.1);
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 20px;
+  background-color: var(--border-color);
+  margin: 0 4px;
+}
+
+.pin-toolbar-btn {
+  color: var(--icon-color);
+}
+
+.pin-toolbar-btn.pinned,
+.pin-toolbar-btn.active {
+  color: var(--accent-blue) !important;
+  background-color: rgba(59, 130, 246, 0.12);
+}
+
+.pin-toolbar-btn.pinned:hover,
+.pin-toolbar-btn.active:hover {
+  color: var(--accent-blue) !important;
+  background-color: rgba(59, 130, 246, 0.2);
+}
+
+.pin-toolbar-btn.pinned svg path,
+.pin-toolbar-btn.active svg path {
+  fill: currentColor;
 }
 
 /* =========================
-   APP
-========================= */
-
-.app {
-  min-height: 100vh;
+   LEFT PANE: SIDEBAR
+   ========================= */
+.sidebar-pane {
+  width: 320px;
+  min-width: 260px;
+  max-width: 450px;
+  height: 100%;
+  background-color: var(--bg-sidebar);
+  border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s ease;
+  z-index: 10;
+  user-select: none;
 }
 
-/* =========================
-   HEADER
-========================= */
+.sidebar-pane.collapsed {
+  width: 0;
+  min-width: 0;
+  transform: translateX(-100%);
+  border-right: none;
+  overflow: hidden;
+}
 
-.header {
-  width: 100%;
-  padding: 20px 8%;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
+/* TOP SIDEBAR HEADER */
+.sidebar-top-bar {
+  height: 48px;
+  padding: 0 12px;
+  background-color: var(--bg-sidebar);
+  border-bottom: 1px solid var(--border-color);
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 30px;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  justify-content: space-between;
+  gap: 8px;
 }
 
-.logo h1 {
-  font-family: var(--font-display);
-  font-size: 32px;
-  font-weight: 400;
+.sidebar-title-area {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex: 1;
+  text-align: center;
+  justify-content: center;
+}
+
+.sidebar-title {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--text-primary);
   letter-spacing: -0.01em;
-  color: var(--text);
-  line-height: 1.1;
 }
 
-.logo p {
-  font-size: 13px;
+.sidebar-count {
+  font-size: 11.5px;
   color: var(--text-muted);
-  letter-spacing: 0.01em;
+  font-weight: 500;
 }
 
-/* =========================
-   HEADER ACTIONS
-========================= */
+.compose-btn {
+  color: var(--icon-color);
+}
 
-.header-actions {
+.compose-btn:hover {
+  color: var(--icon-hover);
+}
+
+/* SEARCH BAR */
+.search-bar {
+  padding: 9px 12px;
   display: flex;
   align-items: center;
   gap: 10px;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-sidebar);
+  position: relative;
 }
 
-/* =========================
-   SEARCH
-========================= */
-
-.search-container {
-  width: 320px;
+.search-icon {
+  color: var(--text-secondary);
+  flex-shrink: 0;
 }
 
 #search-input {
   width: 100%;
-  padding: 10px 14px;
-  border: 1px solid var(--border-input);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: var(--text);
-  font-family: var(--font-body);
-  font-size: 14px;
+  background: transparent;
+  border: none;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.3s ease;
+  font-family: var(--font-main);
+  font-size: 13.5px;
+  color: var(--text-primary);
+  padding: 0;
 }
 
 #search-input::placeholder {
-  color: var(--text-muted);
-}
-
-#search-input:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-ring);
-}
-
-/* =========================
-   THEME BUTTON
-========================= */
-
-.theme-toggle {
-  width: 42px;
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--border-input);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: transparent;
-  font-size: 0;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: background-color 0.2s, border-color 0.2s, transform 0.15s;
-}
-
-/* Moon icon — shown in light mode */
-.theme-toggle::before {
-  content: "";
-  width: 20px;
-  height: 20px;
-  display: block;
-  background-color: var(--text);
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z'/%3E%3C/svg%3E");
-  -webkit-mask-size: contain;
-  -webkit-mask-repeat: no-repeat;
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z'/%3E%3C/svg%3E");
-  mask-size: contain;
-  mask-repeat: no-repeat;
-  transition: background-color 0.3s ease;
-}
-
-/* Sun icon — shown in dark mode */
-body.dark-theme .theme-toggle::before {
-  background-color: #e8e6e1;
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='5'/%3E%3Cline x1='12' y1='1' x2='12' y2='3'/%3E%3Cline x1='12' y1='21' x2='12' y2='23'/%3E%3Cline x1='4.22' y1='4.22' x2='5.64' y2='5.64'/%3E%3Cline x1='18.36' y1='18.36' x2='19.78' y2='19.78'/%3E%3Cline x1='1' y1='12' x2='3' y2='12'/%3E%3Cline x1='21' y1='12' x2='23' y2='12'/%3E%3Cline x1='4.22' y1='19.78' x2='5.64' y2='18.36'/%3E%3Cline x1='18.36' y1='5.64' x2='19.78' y2='4.22'/%3E%3C/svg%3E");
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='5'/%3E%3Cline x1='12' y1='1' x2='12' y2='3'/%3E%3Cline x1='12' y1='21' x2='12' y2='23'/%3E%3Cline x1='4.22' y1='4.22' x2='5.64' y2='5.64'/%3E%3Cline x1='18.36' y1='18.36' x2='19.78' y2='19.78'/%3E%3Cline x1='1' y1='12' x2='3' y2='12'/%3E%3Cline x1='21' y1='12' x2='23' y2='12'/%3E%3Cline x1='4.22' y1='19.78' x2='5.64' y2='18.36'/%3E%3Cline x1='18.36' y1='5.64' x2='19.78' y2='4.22'/%3E%3C/svg%3E");
-}
-
-.theme-toggle:hover {
-  background: var(--surface-secondary);
-  border-color: var(--primary);
-}
-
-.theme-toggle:active {
-  transform: scale(0.94);
-}
-
-/* =========================
-   MAIN CONTENT
-========================= */
-
-.main-content {
-  width: min(1100px, 90%);
-  margin: 36px auto;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  flex: 1;
-}
-
-/* =========================
-   NOTES WORKSPACE
-========================= */
-
-.notes-workspace {
-  display: grid;
-  grid-template-columns: 270px 1fr;
-  height: 550px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-md);
-  transition: background-color 0.3s ease, border-color 0.3s ease,
-    box-shadow 0.3s ease;
-}
-
-/* =========================
-   NOTES SIDEBAR
-========================= */
-
-.notes-sidebar {
-  display: flex;
-  flex-direction: column;
-  background: var(--surface-secondary);
-  border-right: 1px solid var(--border);
-  min-width: 0;
-  min-height: 0;
-  overflow: hidden;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-
-/* =========================
-   SIDEBAR HEADER
-========================= */
-
-.sidebar-header {
-  padding: 18px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  border-bottom: 1px solid var(--border);
-}
-
-.sidebar-header h2 {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text);
-  letter-spacing: -0.01em;
-}
-
-.sidebar-header p {
-  margin-top: 1px;
-  font-size: 12px;
-  color: var(--text-muted);
-}
-
-/* =========================
-   NEW NOTE BUTTON
-========================= */
-
-.new-note-btn {
-  padding: 7px 12px;
-  border: none;
-  border-radius: 6px;
-  background: var(--primary);
-  color: #fff;
-  font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background-color 0.2s, transform 0.1s;
-}
-
-.new-note-btn:hover {
-  background: var(--primary-hover);
-}
-
-.new-note-btn:active {
-  transform: scale(0.97);
+  color: var(--text-secondary);
+  opacity: 0.85;
 }
 
 /* =========================
    NOTES LIST
-========================= */
-
+   ========================= */
 .notes-list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: 8px;
-  overflow-y: auto;
-  flex: 1;
-  min-height: 0;
 }
 
-/* scrollbar — thin, auto-hiding, Ink & Paper palette */
-.notes-list {
-  scrollbar-width: thin;
-  scrollbar-color: transparent transparent;
-  transition: scrollbar-color 0.3s ease;
-}
-
-.notes-list:hover {
-  scrollbar-color: var(--border) transparent;
-}
-
-.notes-list::-webkit-scrollbar {
+/* Thin Sleek Scrollbar */
+.notes-list::-webkit-scrollbar,
+.editor-pane::-webkit-scrollbar,
+.drawer-content::-webkit-scrollbar {
   width: 6px;
 }
 
-.notes-list::-webkit-scrollbar-track {
+.notes-list::-webkit-scrollbar-track,
+.editor-pane::-webkit-scrollbar-track,
+.drawer-content::-webkit-scrollbar-track {
   background: transparent;
-  margin: 6px 0;
 }
 
-.notes-list::-webkit-scrollbar-thumb {
-  background: transparent;
-  border-radius: 100px;
-  transition: background-color 0.3s ease;
+.notes-list::-webkit-scrollbar-thumb,
+.editor-pane::-webkit-scrollbar-thumb,
+.drawer-content::-webkit-scrollbar-thumb {
+  background: #2b3140;
+  border-radius: 4px;
 }
 
-.notes-list:hover::-webkit-scrollbar-thumb {
-  background: var(--border);
-}
-
-.notes-list::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
-}
-
-.notes-list::-webkit-scrollbar-thumb:active {
-  background: var(--text-secondary);
+.notes-list::-webkit-scrollbar-thumb:hover,
+.editor-pane::-webkit-scrollbar-thumb:hover,
+.drawer-content::-webkit-scrollbar-thumb:hover {
+  background: #3e465c;
 }
 
 /* =========================
-   NOTE CARD
-========================= */
-
+   NOTE CARD (1:1 SIMPLENOTE STYLE)
+   ========================= */
 .note-card {
-  padding: 12px 14px;
-  background: transparent;
-  border: none;
-  border-left: 3px solid transparent;
-  border-radius: 0;
+  padding: 13px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
   cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s;
+  transition: background-color var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  position: relative;
 }
 
 .note-card:hover {
-  background: var(--surface-secondary);
-  border-left-color: var(--border);
+  background-color: var(--bg-hover);
 }
 
+/* Active Note Card (Simplenote Navy Highlight) */
 .note-card.active {
-  background: var(--primary-ghost);
-  border-left: 3px solid var(--primary);
-  box-shadow: inset 0 0 0 1px var(--primary-ring), var(--shadow-sm);
+  background-color: var(--bg-active-card) !important;
+}
+
+.note-card .note-content {
+  min-width: 0;
+  padding-right: 28px; /* Space for pin button */
+}
+
+.note-card .note-content h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
 }
 
 .note-card.active .note-content h3 {
-  color: var(--primary);
+  color: var(--text-active-title) !important;
 }
 
-.note-card.active .note-meta {
-  color: var(--text-secondary);
-}
-
-/* =========================
-   NOTE CARD CONTENT
-========================= */
-
-.note-content {
-  margin-bottom: 6px;
-  min-width: 0;
-}
-
-.note-content h3 {
-  margin-bottom: 2px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text);
-}
-
-.note-content p {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 12px;
-  color: var(--text-secondary);
-}
-
-/* =========================
-   NOTE META
-========================= */
-
-.note-meta {
+.note-card .note-meta {
   display: flex;
+  align-items: center;
   gap: 8px;
-  font-size: 11px;
-  color: var(--text-muted);
+  min-width: 0;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+}
+
+.note-card .note-meta span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.note-card.active .note-meta,
+.note-card.active .note-meta span {
+  color: var(--text-active-snippet) !important;
 }
 
 /* =========================
-   EMPTY STATE
-========================= */
+   PIN BUTTON & SYMBOL STYLES
+   ========================= */
+.note-card .pin-btn,
+.note-card .pin-symbol,
+.note-card .pin-icon {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  opacity: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 1;
+  transition: opacity var(--transition-fast), color var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast);
+  z-index: 2;
+}
 
+.note-card .pin-btn svg,
+.note-card .pin-symbol svg,
+.note-card .pin-icon svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  fill: none;
+  transition: transform var(--transition-fast);
+}
+
+/* Reveal pin button on note card hover */
+.note-card:hover .pin-btn,
+.note-card:hover .pin-symbol,
+.note-card:hover .pin-icon {
+  opacity: 0.6;
+}
+
+/* Direct hover on the pin button */
+.note-card .pin-btn:hover,
+.note-card .pin-symbol:hover,
+.note-card .pin-icon:hover {
+  opacity: 1 !important;
+  color: var(--accent-blue);
+  background-color: var(--bg-hover);
+  transform: scale(1.1);
+}
+
+.note-card .pin-btn:active,
+.note-card .pin-symbol:active,
+.note-card .pin-icon:active {
+  transform: scale(0.9);
+}
+
+/* Pinned Note Card State (when toggled) */
+.note-card.pinned {
+  border-left: 3px solid var(--accent-blue);
+  background-color: rgba(59, 130, 246, 0.04);
+}
+
+body:not(.dark-theme) .note-card.pinned {
+  background-color: rgba(59, 130, 246, 0.06);
+}
+
+.note-card.active.pinned {
+  border-left-color: #60a5fa;
+}
+
+/* Pinned Symbol / Button State */
+.note-card.pinned .pin-btn,
+.note-card.pinned .pin-symbol,
+.note-card.pinned .pin-icon,
+.note-card .pin-btn.pinned,
+.note-card .pin-symbol.pinned,
+.note-card .pin-icon.pinned {
+  opacity: 1 !important;
+  color: var(--accent-blue);
+  transform: rotate(-45deg);
+}
+
+.note-card.pinned .pin-btn:hover,
+.note-card.pinned .pin-symbol:hover,
+.note-card.pinned .pin-icon:hover {
+  transform: rotate(-45deg) scale(1.1);
+}
+
+/* EMPTY STATE */
 .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  padding: 48px 16px;
+  padding: 48px 24px;
   color: var(--text-secondary);
+  height: 100%;
+}
+
+.empty-state svg {
+  margin-bottom: 14px;
+  color: var(--text-muted);
 }
 
 .empty-state h3 {
-  margin-bottom: 6px;
-  color: var(--text);
-  font-size: 15px;
+  font-size: 14.5px;
   font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
 }
 
 .empty-state p {
-  font-size: 13px;
-  color: var(--text-muted);
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.45;
 }
 
 /* =========================
-   NOTE EDITOR — with Ink Strip signature
-========================= */
-
-.note-editor {
-  min-width: 0;
-  padding: 28px 32px;
-  background: var(--surface);
-  border-left: 3px solid var(--primary);
+   RIGHT PANE: EDITOR
+   ========================= */
+.editor-pane {
+  flex: 1;
+  height: 100%;
+  background-color: var(--bg-editor);
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
 }
 
-body.dark-theme .note-editor {
-  box-shadow: inset 3px 0 12px -4px var(--primary-ring);
-}
-
-/* =========================
-   EDITOR HEADER
-========================= */
-
-.editor-header {
+/* TOP EDITOR TOOLBAR */
+.editor-toolbar {
+  height: 48px;
+  padding: 0 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-toolbar);
+  flex-shrink: 0;
+  z-index: 5;
 }
 
-.editor-label {
-  font-size: 11px;
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* NoteFlow Brand in Editor Toolbar */
+.app-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+  cursor: default;
+}
+
+.brand-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-blue);
+  transition: transform var(--transition-normal);
+}
+
+.app-brand:hover .brand-icon-wrapper {
+  transform: rotate(-6deg) scale(1.08);
+}
+
+.brand-name {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.brand-accent {
+  color: var(--accent-blue);
   font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--primary);
 }
 
-#editor-status {
-  margin-top: 2px;
-  font-size: 13px;
-  color: var(--text-muted);
-}
-
-/* =========================
-   NOTE ACTIONS
-========================= */
-
-.note-actions {
+.toolbar-right {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
-.note-actions button {
-  padding: 8px 14px;
-  border-radius: 7px;
-  font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s, color 0.2s,
-    transform 0.1s;
-}
-
-.note-actions button:active {
-  transform: scale(0.97);
-}
-
 /* =========================
-   DELETE BUTTON
-========================= */
-
-.delete-btn {
-  border: 1px solid var(--border-input);
-  background: var(--surface);
-  color: var(--danger);
+   EDITOR WRITING CANVAS
+   ========================= */
+.editor-content-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 36px 48px;
 }
 
-.delete-btn:hover {
-  background: var(--danger-ghost);
-  border-color: var(--danger);
+.editor-writing-area {
+  width: 100%;
+  max-width: 780px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 100%;
 }
 
-/* =========================
-   EDIT BUTTON
-========================= */
-
-.edit-btn {
-  border: 1px solid var(--border-input);
-  background: var(--surface);
-  color: var(--text);
-  padding: 8px 14px;
-  border-radius: 7px;
-  font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s, color 0.2s,
-    transform 0.1s;
-}
-
-.edit-btn:hover {
-  background: var(--primary-ghost);
-  border-color: var(--primary);
-  color: var(--primary);
-}
-
-.edit-btn:active {
-  transform: scale(0.97);
-}
-
-/* =========================
-   SAVE BUTTON
-========================= */
-
-#save-note-btn {
-  border: none;
-  border-radius: 7px;
-  padding: 8px 16px;
-  background: var(--primary);
-  color: #fff;
-  font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s, transform 0.1s;
-}
-
-#save-note-btn:hover {
-  background: var(--primary-hover);
-}
-
-#save-note-btn:active {
-  transform: scale(0.97);
-}
-
-/* =========================
-   TITLE CONTAINER
-========================= */
-
+/* Seamless Title Input */
 .title-container {
-  margin-top: 22px;
+  margin-bottom: 16px;
+  width: 100%;
 }
-
-.title-container label,
-.content-container label {
-  display: block;
-  margin-bottom: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-
-/* =========================
-   NOTE TITLE INPUT
-========================= */
 
 #note-title {
   width: 100%;
-  padding: 10px 14px;
-  border: 1px solid var(--border-input);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: var(--text);
-  font-family: var(--font-body);
-  font-size: 18px;
-  font-weight: 600;
+  background: transparent;
+  border: none;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.3s ease;
+  font-family: var(--font-main);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.4;
+  padding: 0;
+  margin: 0;
+  transition: color var(--transition-fast);
 }
 
 #note-title::placeholder {
   color: var(--text-muted);
-  font-weight: 400;
+  font-weight: 500;
 }
 
-#note-title:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-ring);
-}
-
-/* =========================
-   CONTENT CONTAINER
-========================= */
-
+/* Seamless Content Textarea */
 .content-container {
-  margin-top: 18px;
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 0;
+  width: 100%;
 }
-
-/* =========================
-   NOTE CONTENT INPUT
-========================= */
 
 #note-input {
   width: 100%;
   flex: 1;
-  min-height: 120px;
-  padding: 14px;
-  resize: none;
-  border: 1px solid var(--border-input);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: var(--text);
-  font-family: var(--font-body);
-  font-size: 15px;
-  line-height: 1.75;
+  min-height: 380px;
+  background: transparent;
+  border: none;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.3s ease;
+  resize: none;
+  font-family: var(--font-main);
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--text-editor);
+  padding: 0;
+  transition: color var(--transition-fast);
 }
 
 #note-input::placeholder {
   color: var(--text-muted);
 }
 
-#note-input:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-ring);
+/* Maintain high readability when disabled */
+#note-title:disabled,
+#note-input:disabled {
+  background: transparent !important;
+  color: var(--text-primary) !important;
+  -webkit-text-fill-color: var(--text-primary) !important;
+  cursor: default;
+  opacity: 1;
 }
 
 /* =========================
-   EDITOR FOOTER
-========================= */
+   BOTTOM TAGS & FOOTER BAR
+   ========================= */
+.editor-bottom-bar {
+  height: 44px;
+  padding: 0 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--bg-editor);
+  flex-shrink: 0;
+}
 
-.editor-footer {
-  margin-top: 14px;
+.tags-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.tag-pill {
+  background: var(--bg-pill);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 4px;
+  user-select: none;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.add-tag-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-main);
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 4px 0;
+  width: 180px;
+}
+
+.add-tag-input::placeholder {
+  color: var(--text-muted);
+}
+
+.editor-mini-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* =========================
+   INFO POPOVER
+   ========================= */
+.info-popover {
+  position: absolute;
+  top: 54px;
+  right: 20px;
+  width: 250px;
+  background-color: var(--bg-popover);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+  padding: 14px 16px;
+  z-index: 50;
+  display: none;
+  animation: fadeInDown 0.15s ease-out;
+}
+
+.info-popover.open {
+  display: block;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.popover-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.popover-header h4 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.popover-close {
+  font-size: 18px;
+  line-height: 1;
+  padding: 2px 6px;
+}
+
+.popover-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.meta-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 20px;
-  padding-top: 14px;
-  border-top: 1px solid var(--border);
+  font-size: 12px;
 }
 
-#character-count {
+.meta-label {
+  color: var(--text-secondary);
+}
+
+.meta-val {
+  color: var(--text-primary);
+  font-weight: 500;
   font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--text-muted);
-  letter-spacing: -0.02em;
-}
-
-.editor-footer .note-meta {
-  display: flex;
-  gap: 14px;
-  font-size: 12px;
-  color: var(--text-muted);
 }
 
 /* =========================
-   NOTES CONTROLS
-========================= */
-
-.notes-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-  padding: 18px 20px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+   HAMBURGER SETTINGS DRAWER
+   ========================= */
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(2px);
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-normal);
 }
 
-.notes-controls h2 {
+.menu-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.menu-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 320px;
+  background-color: var(--bg-sidebar);
+  border-right: 1px solid var(--border-color);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
+  z-index: 101;
+  transform: translateX(-100%);
+  transition: transform var(--transition-normal);
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-drawer.open {
+  transform: translateX(0);
+}
+
+.drawer-header {
+  height: 52px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.drawer-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-primary);
+}
+
+.drawer-title h2 {
   font-size: 15px;
   font-weight: 600;
 }
 
-.notes-controls p {
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin-top: 1px;
+.drawer-content {
+  padding: 20px 16px;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
-/* =========================
-   SORT
-========================= */
+.drawer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 
-.sort-container {
+.section-heading {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: var(--text-secondary);
+}
+
+.drawer-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background-color: var(--bg-hover);
+  border-radius: 6px;
+  font-size: 13.5px;
+  color: var(--text-primary);
 }
 
-.sort-container label {
-  font-size: 13px;
-  color: var(--text-secondary);
-  white-space: nowrap;
-}
-
-#sort-select {
-  padding: 8px 12px;
-  border: 1px solid var(--border-input);
-  border-radius: 7px;
-  background: var(--surface);
-  color: var(--text);
-  font-family: var(--font-body);
+/* Custom Select for Sort */
+.custom-select-wrapper select {
+  width: 100%;
+  padding: 9px 12px;
+  background-color: var(--bg-pill);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-family: var(--font-main);
   font-size: 13px;
   outline: none;
   cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s;
+  transition: border-color var(--transition-fast);
 }
 
-#sort-select:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-ring);
+.custom-select-wrapper select:focus {
+  border-color: var(--accent-blue);
 }
 
-/* =========================
-   DAILY QUOTE — Signature typography moment
-========================= */
+/* Theme Toggle Button inside Drawer */
+.theme-toggle {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--icon-color);
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--transition-fast), background-color var(--transition-fast), transform 0.1s;
+}
 
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--icon-hover);
+}
+
+body:not(.dark-theme) .theme-toggle:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.theme-toggle:active {
+  transform: scale(0.92);
+}
+
+.theme-toggle:focus {
+  outline: none;
+}
+
+.theme-toggle .theme-icon {
+  display: none;
+  stroke: currentColor;
+  fill: none;
+}
+
+/* In dark mode, show the transparent outlined Sun icon */
+.dark-theme .theme-toggle .sun-icon {
+  display: block;
+}
+
+/* In light mode, show the transparent outlined Moon icon */
+body:not(.dark-theme) .theme-toggle .moon-icon {
+  display: block;
+}
+
+/* Daily Quote in Drawer */
 .daily-quote {
-  padding: 36px 32px;
-  background: var(--quote-background);
-  color: var(--quote-text);
-  border-radius: var(--radius-lg);
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-  transition: background-color 0.3s ease;
-}
-
-/* subtle decorative line above the quote */
-.daily-quote::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 48px;
-  height: 2px;
-  background: var(--primary);
-  border-radius: 1px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  border-left: 3px solid var(--accent-blue);
 }
 
 .quote-header {
-  margin-bottom: 18px;
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 1px;
   text-transform: uppercase;
-  letter-spacing: 2px;
-  color: var(--quote-muted);
+  color: var(--text-secondary);
+  margin-bottom: 6px;
 }
 
 #quote-text {
-  max-width: 640px;
-  margin: 0 auto 16px;
-  font-family: var(--font-display);
-  font-size: 22px;
+  font-family: var(--font-serif);
+  font-size: 14px;
   font-style: italic;
   line-height: 1.5;
-  color: var(--quote-text);
+  color: var(--text-primary);
+  margin-bottom: 6px;
 }
 
 #quote-author {
-  font-size: 13px;
-  color: var(--quote-muted);
-  letter-spacing: 0.02em;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  text-align: right;
 }
 
 /* =========================
-   FOOTER
-========================= */
-
-.footer {
-  padding: 18px 20px;
-  text-align: center;
-  border-top: 1px solid var(--border);
-  background: var(--surface);
-  font-size: 12px;
-  color: var(--text-muted);
-  letter-spacing: 0.02em;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-
-/* =========================
-   RESPONSIVE — 800px
-========================= */
-
-@media (max-width: 800px) {
-  .notes-workspace {
-    grid-template-columns: 1fr;
-    min-height: auto;
+   RESPONSIVE DESIGN
+   ========================= */
+@media (max-width: 768px) {
+  .sidebar-pane {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 290px;
+    z-index: 40;
+    box-shadow: 6px 0 20px rgba(0, 0, 0, 0.5);
   }
 
-  .notes-sidebar {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-    max-height: 300px;
-  }
-
-  .notes-list {
-    max-height: 220px;
-  }
-
-  .note-editor {
+  .editor-content-wrapper {
     padding: 24px 20px;
-    border-left: none;
-    border-top: 3px solid var(--primary);
   }
 
-  body.dark-theme .note-editor {
-    box-shadow: inset 0 3px 12px -4px var(--primary-ring);
-  }
-}
-
-/* =========================
-   RESPONSIVE — 700px
-========================= */
-
-@media (max-width: 700px) {
-  .header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 14px;
+  .editor-bottom-bar {
+    padding: 0 20px;
   }
 
-  .header-actions {
-    width: 100%;
-  }
-
-  .search-container {
-    width: 100%;
-    flex: 1;
-  }
-
-  .theme-toggle {
-    flex-shrink: 0;
-  }
-
-  .editor-header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-  }
-
-  .note-actions {
-    justify-content: flex-end;
-  }
-
-  .editor-footer {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .editor-footer .note-meta {
-    flex-direction: column;
-    gap: 3px;
-  }
-
-  .notes-controls {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .sort-container {
-    justify-content: space-between;
-  }
-
-  #sort-select {
-    flex: 1;
-  }
-
-  .daily-quote {
-    padding: 28px 20px;
-  }
-
-  #quote-text {
-    font-size: 19px;
+  .save-btn span {
+    display: none;
   }
 }
