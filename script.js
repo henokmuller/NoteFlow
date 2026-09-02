@@ -37,6 +37,7 @@ const allNotesCountEl = document.getElementById("all-notes-count");
 const trashNotesCountEl = document.getElementById("trash-notes-count");
 const sidebarViewTitle = document.getElementById("sidebar-view-title");
 const emptyTrashBtn = document.getElementById("empty-trash-btn");
+const backToNotesBtn = document.getElementById("back-to-notes-btn");
 const trashNoticeBanner = document.getElementById("trash-notice-banner");
 const restoreNoteBtn = document.getElementById("restore-note-btn");
 const deletePermanentBtn = document.getElementById("delete-permanent-btn");
@@ -229,6 +230,7 @@ class NOTE_FACTORY {
   createdAt;
   isPinned;
   tags;
+  modifiedAt;
 
   constructor(
     note = "",
@@ -239,7 +241,8 @@ class NOTE_FACTORY {
     id = null,
     createdAt = Date.now(),
     isPinned = false,
-    tags = []
+    tags = [],
+    modifiedAt = null
   ) {
     this.id = id !== null && id !== undefined ? String(id) : String(Date.now());
     this.note = typeof note === "string" ? note : "";
@@ -250,6 +253,7 @@ class NOTE_FACTORY {
     this.createdAt = Number(createdAt) || Date.now();
     this.isPinned = Boolean(isPinned);
     this.tags = Array.isArray(tags) ? tags.map((t) => String(t).trim().toLowerCase().replace(/^#+/, "")).filter(Boolean) : [];
+    this.modifiedAt = modifiedAt ? Number(modifiedAt) : Number(createdAt) || Date.now();
   }
 }
 
@@ -354,6 +358,7 @@ async function store() {
         currentNote.note = noteinput.value;
         currentNote.title = titleContent;
         currentNote.tags = [...currentTags];
+        currentNote.modifiedAt = Date.now();
 
         const card = document.getElementById(String(cardID));
         if (card) {
@@ -362,6 +367,11 @@ async function store() {
             cardTitleEl.textContent = titleContent;
           }
           updateCardTagsDisplay(cardID, currentTags);
+        }
+
+        if (editedDateEl) {
+          const m = new Date(currentNote.modifiedAt);
+          editedDateEl.textContent = formatDate(m.getUTCDate(), m.getUTCMonth() + 1, m.getUTCFullYear());
         }
       }
 
@@ -531,6 +541,15 @@ function makeCard(noteObj = NoteStorage[NoteStorage.length - 1]) {
         if (createdDateEl) {
           createdDateEl.textContent = formattedDate;
         }
+
+        if (editedDateEl) {
+          if (currentNote.modifiedAt) {
+            const m = new Date(currentNote.modifiedAt);
+            editedDateEl.textContent = formatDate(m.getUTCDate(), m.getUTCMonth() + 1, m.getUTCFullYear());
+          } else {
+            editedDateEl.textContent = formattedDate;
+          }
+        }
       } catch (err) {
         console.error("Error activating note card:", err.message);
       }
@@ -613,6 +632,15 @@ function makeTrashCard(trashObj) {
 
         if (createdDateEl) {
           createdDateEl.textContent = formattedDate;
+        }
+
+        if (editedDateEl) {
+          if (trashObj.modifiedAt) {
+            const m = new Date(trashObj.modifiedAt);
+            editedDateEl.textContent = formatDate(m.getUTCDate(), m.getUTCMonth() + 1, m.getUTCFullYear());
+          } else {
+            editedDateEl.textContent = formattedDate;
+          }
         }
       } catch (err) {
         console.error("Error activating trash note card:", err.message);
@@ -1018,11 +1046,17 @@ function switchView(view) {
       if (viewTrashBtn) viewTrashBtn.classList.add("active");
       if (viewAllNotesBtn) viewAllNotesBtn.classList.remove("active");
       if (sidebarViewTitle) sidebarViewTitle.textContent = "Trash";
+      if (backToNotesBtn) backToNotesBtn.style.display = "flex";
       if (newNoteBtn) newNoteBtn.style.display = "none";
       if (emptyTrashBtn) emptyTrashBtn.style.display = "flex";
       if (saveNotes) saveNotes.style.display = "none";
       if (deleteNoteBtn) deleteNoteBtn.style.display = "none";
       if (pinNoteBtn) pinNoteBtn.style.display = "none";
+      if (tagInput) {
+        tagInput.disabled = true;
+        tagInput.placeholder = "Note is in trash";
+      }
+      if (tagsContainer) tagsContainer.classList.add("readonly");
 
       cleanupExpiredTrash();
       renderTrashList();
@@ -1030,11 +1064,17 @@ function switchView(view) {
       if (viewAllNotesBtn) viewAllNotesBtn.classList.add("active");
       if (viewTrashBtn) viewTrashBtn.classList.remove("active");
       if (sidebarViewTitle) sidebarViewTitle.textContent = "All Notes";
+      if (backToNotesBtn) backToNotesBtn.style.display = "none";
       if (newNoteBtn) newNoteBtn.style.display = "flex";
       if (emptyTrashBtn) emptyTrashBtn.style.display = "none";
       if (saveNotes) saveNotes.style.display = "inline-flex";
       if (deleteNoteBtn) deleteNoteBtn.style.display = "inline-flex";
       if (pinNoteBtn) pinNoteBtn.style.display = "inline-flex";
+      if (tagInput) {
+        tagInput.disabled = false;
+        tagInput.placeholder = "Add a tag...";
+      }
+      if (tagsContainer) tagsContainer.classList.remove("readonly");
 
       renderNotesList();
     }
@@ -1246,7 +1286,7 @@ async function deleteData(cardID) {
     const response = await fetch(`http://localhost:3000/notes/${cardID}`, {
       method: "DELETE",
     });
-    if (!response.ok) {
+    if (!response.ok && response.status !== 404) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
   } catch (err) {
@@ -1310,6 +1350,7 @@ if (sortSelect) sortSelect.addEventListener("change", reorderCards);
 
 if (viewAllNotesBtn) viewAllNotesBtn.addEventListener("click", () => switchView("notes"));
 if (viewTrashBtn) viewTrashBtn.addEventListener("click", () => switchView("trash"));
+if (backToNotesBtn) backToNotesBtn.addEventListener("click", () => switchView("notes"));
 if (emptyTrashBtn) emptyTrashBtn.addEventListener("click", emptyTrash);
 if (restoreNoteBtn) restoreNoteBtn.addEventListener("click", restoreActiveTrashNote);
 if (deletePermanentBtn) deletePermanentBtn.addEventListener("click", deletePermanentActiveTrashNote);

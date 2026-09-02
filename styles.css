@@ -749,6 +749,10 @@ body:not(.dark-theme) .note-card.pinned {
   min-height: 28px;
 }
 
+.tags-container.readonly input {
+  display: none;
+}
+
 .tag-pill {
   display: inline-flex;
   align-items: center;
@@ -1058,6 +1062,7 @@ body:not(.dark-theme) .note-card.pinned {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 12px;
   padding: 10px 16px;
   background-color: rgba(248, 113, 113, 0.08);
