@@ -314,30 +314,61 @@ body {
   flex-direction: column;
 }
 
-/* Thin Sleek Scrollbar */
-.notes-list::-webkit-scrollbar,
-.editor-pane::-webkit-scrollbar,
-.drawer-content::-webkit-scrollbar {
-  width: 6px;
+/* Global Sleek Scrollbar (Cross-browser, zero white tracks, zero arrows) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
 }
 
-.notes-list::-webkit-scrollbar-track,
-.editor-pane::-webkit-scrollbar-track,
-.drawer-content::-webkit-scrollbar-track {
+body:not(.dark-theme) * {
+  scrollbar-color: rgba(0, 0, 0, 0.22) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.notes-list::-webkit-scrollbar-thumb,
-.editor-pane::-webkit-scrollbar-thumb,
-.drawer-content::-webkit-scrollbar-thumb {
-  background: #2b3140;
-  border-radius: 4px;
+::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  transition: background-color var(--transition-fast);
 }
 
-.notes-list::-webkit-scrollbar-thumb:hover,
-.editor-pane::-webkit-scrollbar-thumb:hover,
-.drawer-content::-webkit-scrollbar-thumb:hover {
-  background: #3e465c;
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.32);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: rgba(255, 255, 255, 0.45);
+}
+
+/* Remove default browser arrow buttons */
+::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Light Theme Scrollbar */
+body:not(.dark-theme) ::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+body:not(.dark-theme) ::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.35);
+}
+
+body:not(.dark-theme) ::-webkit-scrollbar-thumb:active {
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 /* =========================
@@ -393,10 +424,21 @@ body {
   color: var(--text-secondary);
 }
 
-.note-card .note-meta span {
+.note-card .note-meta .note-date {
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.note-card .note-meta .note-tags {
+  display: block;
+  flex: 1;
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 11.5px;
+  color: var(--text-muted);
 }
 
 .note-card.active .note-meta,
@@ -765,20 +807,6 @@ body:not(.dark-theme) .note-card.pinned {
   color: var(--text-muted);
 }
 
-.note-card .note-tags {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 11px;
-  color: var(--text-muted);
-}
-
-.note-card.active .note-tags {
-  color: var(--text-active-snippet);
-}
 
 .editor-mini-meta {
   font-size: 12px;

@@ -215,16 +215,6 @@
                 <line x1="12" y1="8" x2="12.01" y2="8"></line>
               </svg>
             </button>
-
-            <!-- More button (circle with three dots) -->
-            <button class="icon-btn" id="more-options-btn" type="button" aria-label="More options" title="More Options">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="8" y1="12" x2="8.01" y2="12" stroke-width="3"></line>
-                <line x1="12" y1="12" x2="12.01" y2="12" stroke-width="3"></line>
-                <line x1="16" y1="12" x2="16.01" y2="12" stroke-width="3"></line>
-              </svg>
-            </button>
           </div>
         </header>
 
@@ -307,7 +297,6 @@
         const closePopover = document.getElementById('close-popover-btn');
         const collapseBtn = document.getElementById('collapse-sidebar-btn');
         const sidebar = document.getElementById('sidebar-pane');
-        const moreBtn = document.getElementById('more-options-btn');
 
         function toggleMenu() {
           drawer.classList.toggle('open');
@@ -339,10 +328,6 @@
           collapseBtn.addEventListener('click', () => {
             sidebar.classList.toggle('collapsed');
           });
-        }
-
-        if (moreBtn) {
-          moreBtn.addEventListener('click', toggleMenu);
         }
       })();
     </script>

@@ -354,6 +354,7 @@ function makeCard(noteObj = NoteStorage[NoteStorage.length - 1]) {
     const title = document.createElement("h3");
     const noteMeta = document.createElement("div");
     const dateCreated = document.createElement("span");
+    dateCreated.className = "note-date";
     const emptyState = document.getElementById("empty-state");
 
     const currentNoteObject = noteObj;
