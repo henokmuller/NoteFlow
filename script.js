@@ -274,6 +274,52 @@ function noteCounter() {
   }
 }
 
+function createDefaultGuideNote() {
+  const guideText = `Welcome to NoteFlow! Here is a quick guide to help you get the most out of your workspace:
+
+✍️ Writing & Editing
+• Click any note in the sidebar to open and edit it instantly—no edit button needed.
+• Type your thoughts in the canvas and click "Save" to save your updates.
+• Click the Compose icon (pencil) in the sidebar header to draft a new note.
+
+📌 Pinning Priority Notes
+• Click the pushpin icon directly on any note card or in the editor toolbar to anchor key notes to the top.
+• Pinned notes stay fixed at the top regardless of sort order.
+
+🏷️ Organizing with Tags
+• Add tags in the bottom bar below the editor.
+• Type your tag and press Enter or comma (,).
+• Click the × on any tag pill to remove it.
+
+🔍 Real-Time Search
+• Search across note titles, body text, and tags simultaneously.
+• Search for specific tags with or without the # symbol (e.g. #guide or guide).
+
+🗑️ Safe Trash & 30-Day Auto-Purge
+• Delete notes instantly with no disruptive popups.
+• Access the Trash view from the settings drawer to browse deleted notes.
+• Use the direct "← All Notes" button in the sidebar to return in 1 click.
+• Restore any note with 1 click, or let it auto-delete after 30 days.
+
+🌓 Themes & Preferences
+• Open the settings drawer (hamburger menu) to switch between Dark and Light theme.
+• Sort notes by Created: Newest or Created: Oldest.
+
+Enjoy your focused, distraction-free writing!`;
+
+  return new NOTE_FACTORY(
+    guideText,
+    Year,
+    Month,
+    Day,
+    "Welcome to NoteFlow — Quick Start Guide 📌",
+    "welcome-guide",
+    Date.now(),
+    true,
+    ["guide", "welcome", "features"]
+  );
+}
+
 async function fetchData() {
   try {
     const localTrash = loadTrashFromLocalStorage();
@@ -283,36 +329,52 @@ async function fetchData() {
     }
     cleanupExpiredTrash();
 
-    const response = await fetch("http://localhost:3000/notes/");
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    const hasVisited = localStorage.getItem("noteflow_has_visited");
+    let loadedNotes = null;
+
+    try {
+      const response = await fetch("http://localhost:3000/notes/");
+      if (response.ok) {
+        const data = await response.json();
+        if (Array.isArray(data)) {
+          loadedNotes = data;
+        }
+      }
+    } catch (err) {
+      console.warn("Server unavailable. Using local storage:", err.message);
     }
-    const data = await response.json();
-    if (!Array.isArray(data)) {
-      throw new Error("Invalid notes data format from server");
+
+    if (!loadedNotes) {
+      const stored = loadFromLocalStorage();
+      loadedNotes = Array.isArray(stored) ? stored : [];
     }
-    initialDataVis(data);
+
+    if (!hasVisited) {
+      try {
+        localStorage.setItem("noteflow_has_visited", "true");
+      } catch (e) {
+        console.warn("Storage write failed:", e.message);
+      }
+
+      const hasGuide = loadedNotes.some(
+        (n) => n && (String(n.id) === "welcome-guide" || (n.title && n.title.includes("Quick Start Guide")))
+      );
+
+      if (!hasGuide) {
+        const guideNote = createDefaultGuideNote();
+        loadedNotes.unshift(guideNote);
+        postData(guideNote);
+      }
+    } else if (loadedNotes.length === 0) {
+      const guideNote = createDefaultGuideNote();
+      loadedNotes.push(guideNote);
+      postData(guideNote);
+    }
+
+    initialDataVis(loadedNotes);
     saveToLocalStorage();
   } catch (err) {
-    console.warn("Server unavailable or returned error. Falling back to local storage:", err.message);
-    const localData = loadFromLocalStorage();
-    if (Array.isArray(localData) && localData.length > 0) {
-      initialDataVis(localData);
-    } else {
-      const defaultNote = new NOTE_FACTORY(
-        "Welcome to NoteFlow!\n\nClick any note to immediately edit it. Add tags at the bottom to organize your notes. Use the pin icon to keep important notes anchored at the top.",
-        Year,
-        Month,
-        Day,
-        "Welcome to NoteFlow 📌",
-        "1",
-        Date.now(),
-        true,
-        ["getting-started", "features"]
-      );
-      initialDataVis([defaultNote]);
-      saveToLocalStorage();
-    }
+    console.error("Error initializing notes:", err.message);
   }
 }
 
