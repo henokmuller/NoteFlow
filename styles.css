@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SIMPLENOTE DARK THEME & LAYOUT — NoteFlow
+   DARK THEME & LAYOUT — NoteFlow
    ========================================================================== */
 
 /* =========================
@@ -14,14 +14,14 @@
 }
 
 :root {
-  /* Simplenote Dark Color Palette */
+  /* Dark Color Palette */
   --bg-sidebar: #15181f;
   --bg-sidebar-top: #181c25;
   --bg-editor: #1a1d24;
   --bg-toolbar: #1a1d24;
   --bg-popover: #20242e;
   --bg-hover: rgba(255, 255, 255, 0.04);
-  --bg-active-card: #2b3e64; /* Iconic Simplenote active note blue */
+  --bg-active-card: #2b3e64; /* Active note card highlight */
   --bg-pill: #252a36;
   --bg-input: #15181f;
   
@@ -93,8 +93,9 @@ body {
 }
 
 /* =========================
-   SIMPLENOTE APP WRAPPER
+   APPLICATION WRAPPER
    ========================= */
+.noteflow-app,
 .simplenote-app {
   display: flex;
   width: 100vw;
@@ -372,7 +373,7 @@ body:not(.dark-theme) ::-webkit-scrollbar-thumb:active {
 }
 
 /* =========================
-   NOTE CARD (1:1 SIMPLENOTE STYLE)
+   NOTE CARD
    ========================= */
 .note-card {
   padding: 13px 18px;
@@ -390,7 +391,7 @@ body:not(.dark-theme) ::-webkit-scrollbar-thumb:active {
   background-color: var(--bg-hover);
 }
 
-/* Active Note Card (Simplenote Navy Highlight) */
+/* Active Note Card (Navy Highlight) */
 .note-card.active {
   background-color: var(--bg-active-card) !important;
 }

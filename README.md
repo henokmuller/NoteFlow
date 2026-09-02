@@ -1,6 +1,6 @@
 # NoteFlow 📝
 
-A focused, distraction-free note-taking web application inspired by Simplenote. Crafted with vanilla web technologies for speed, resilience, and clean organization.
+A focused, distraction-free note-taking web application. Crafted with vanilla web technologies for speed, resilience, and clean organization.
 
 ---
 
@@ -38,7 +38,7 @@ A focused, distraction-free note-taking web application inspired by Simplenote. 
 NoteFlow/
 ├── index.html       # Application layout, drawer, sidebar, and editor panes
 ├── script.js        # Core logic, pin management, search, storage, and event handlers
-├── styles.css       # Simplenote-inspired theme tokens, layout, and animations
+├── styles.css       # Theme tokens, custom dark/light layout, and animations
 └── README.md        # Project documentation
 ```
 
